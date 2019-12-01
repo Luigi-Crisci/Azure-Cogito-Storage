@@ -1,5 +1,8 @@
 package myapp;
 
+import java.util.Random;
+import java.util.UUID;
+
 import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Env;
 
 import com.azure.storage.blob.BlobServiceClient;
@@ -14,15 +17,16 @@ public class StorageController {
 	private String subscriptionId="9ffa1034-e692-4bb6-aaa7-172fa6352018";
 	
 	public void connect() {
-//		Azure azure = Azure.authenticate(new AppServiceMSICredentials(AzureEnvironment.AZURE))
-//		        .withSubscription(subscriptionId);
-//		StorageAccount account= azure.storageAccounts().getByResourceGroup("azureias-rg", "azureiasstorage");
-//		System.out.println("Account id: " + account.id());
-		//Vault myKeyVault = azure.vaults().getByResourceGroup(resourceGroup, keyvaultName);
+		AppServiceMSICredentials credential = new AppServiceMSICredentials(AzureEnvironment.AZURE);
 		
-		String str=System.getenv("CONNECT_STR");
-		BlobServiceClient client= new BlobServiceClientBuilder().connectionString(str).buildClient();
-		client.createBlobContainer("TestJavaContainer");
+		Azure azure = Azure.authenticate(credential).withSubscription(subscriptionId);
+
+		System.out.println("Account id: " + azure.storageAccounts().checkNameAvailability("Azzzzz"));
+		
+//		String str=System.getenv("CONNECT_STR");
+//		System.out.println("String: " + str);
+//		BlobServiceClient client= new BlobServiceClientBuilder().connectionString(str).buildClient();
+//		client.createBlobContainer("" + UUID.randomUUID().toString().toLowerCase());
 		
 	
 	}

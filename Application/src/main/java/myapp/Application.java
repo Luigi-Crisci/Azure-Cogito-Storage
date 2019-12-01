@@ -33,6 +33,9 @@ public class Application extends SpringBootServletInitializer {
             for (String beanName : beanNames) {
                 System.out.println(beanName);
             }
+            
+        	StorageController x= new StorageController();
+        	x.connect();
 
         };
     }

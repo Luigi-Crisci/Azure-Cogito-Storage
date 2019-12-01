@@ -16,20 +16,24 @@
     
         <properties>
         <java.version>1.8</java.version>
-    <reactor.version>3.0.7.RELEASE</reactor.version>
         </properties>
-
+        
     <dependencies>
-    
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>     
+       
+<dependency>
+    <groupId>io.projectreactor</groupId>
+    <artifactId>reactor-core</artifactId>
+    <version>3.3.0.RELEASE</version>
+</dependency>
 
         <dependency>
     <groupId>com.microsoft.azure</groupId>
     <artifactId>azure</artifactId>
-    <version>1.23.0</version>
+    <version>1.28.0</version>
 </dependency>
 
 <dependency>

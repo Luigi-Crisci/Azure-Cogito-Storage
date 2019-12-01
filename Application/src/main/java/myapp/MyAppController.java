@@ -11,8 +11,6 @@ public class MyAppController {
     
     @RequestMapping("/")
     public String index() {
-    	StorageController x= new StorageController();
-    	x.connect();
         return "index.html";
     }
     
