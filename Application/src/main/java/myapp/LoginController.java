@@ -19,10 +19,15 @@ public class LoginController {
 	}
 	
 	@PostMapping("/login")
-		public String login(@RequestParam(name = "name",required = true) String name, @RequestParam(name = "password", required = true) String password, Model model ) {
+		public String login(@RequestParam(name = "name",required = true) String name, @RequestParam(name = "password", required = true) String password, Model model ) throws ClassNotFoundException {
 		System.out.println("name: " + name + " password: " + password + "\n");
 		
+		DatabaseSingleton Database = DatabaseSingleton.getInstance();
+		String query="INSERT INTO DBO.UTENTE (email, password_auth) VALUES ('peppeXXX@test.it', 'test')";
+		
+		
 		if(name.equals("luigi") && password.equals("root")) {
+			Database.EseguiQuery(query);
 			System.out.println("aaaaa");
 			account.setNome(name);
 			model.addAttribute("account", account);
@@ -40,6 +45,13 @@ public class LoginController {
 			return "index";
 		return "account";
 		
+	}
+	
+	public boolean testdb() throws ClassNotFoundException {
+		DatabaseSingleton Database = DatabaseSingleton.getInstance();
+		String query="INSERT INTO DBO.UTENTE (email, password_auth) VALUES ('peppeXXX@test.it', 'test')";
+		Database.EseguiQuery(query);
+		return true;
 	}
 
 }
