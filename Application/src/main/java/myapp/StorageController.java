@@ -1,6 +1,5 @@
 package myapp;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.OffsetDateTime;
@@ -30,8 +29,6 @@ import com.microsoft.azure.storage.SharedAccessPolicy;
 public class StorageController {
 	
 	private String subscriptionId="9ffa1034-e692-4bb6-aaa7-172fa6352018";
-	
-	
 	
 	public String connect() throws IOException {
 		DefaultAzureCredential x = new DefaultAzureCredentialBuilder().build(); //Access token to resources
