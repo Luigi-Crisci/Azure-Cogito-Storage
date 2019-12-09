@@ -1,10 +1,23 @@
 package myapp;
 
-import org.springframework.context.annotation.Bean;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
+
 
 public class Account {
+
+	Integer id;
+	private String nome;
 	
-	String nome;
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
 	
 	public String getNome() {
 		return nome;

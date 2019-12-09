@@ -1,18 +1,25 @@
 package myapp;
 
+import java.io.File;
 import java.io.IOException;
-import java.time.Clock;
 import java.time.OffsetDateTime;
-import java.time.temporal.TemporalAmount;
+import java.util.HashMap;
 import java.util.UUID;
 
-import com.azure.core.credential.TokenRequestContext;
+import org.springframework.stereotype.Component;
+
+import com.azure.core.http.rest.PagedIterable;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.identity.ManagedIdentityCredential;
-import com.azure.identity.ManagedIdentityCredentialBuilder;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerAsyncClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceAsyncClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.BlobItem;
+import com.azure.storage.blob.models.BlobListDetails;
+import com.azure.storage.blob.models.ListBlobsOptions;
 import com.azure.storage.blob.models.UserDelegationKey;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasQueryParameters;
@@ -25,26 +32,29 @@ import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.storage.*;
 import com.microsoft.azure.storage.SharedAccessAccountPolicy;
 import com.microsoft.azure.storage.SharedAccessPolicy;
+import com.microsoft.azure.storage.blob.BlobListingDetails;
 
 public class StorageController {
 	
 	private String subscriptionId="9ffa1034-e692-4bb6-aaa7-172fa6352018";
+	private DefaultAzureCredential x;
+	private File devCredential;
+	private Azure azure;
+	private StorageAccount account;
+
+	public StorageController() throws IOException {
+		x = new DefaultAzureCredentialBuilder().build();
+		devCredential = new File("C:\\Users\\luigi\\git\\AzureIAS\\Application\\appconfig.json"); //Only on local
+		//azure= Azure.authenticate(new AppServiceMSICredentials(AzureEnvironment.AZURE)).withSubscription(subscriptionId);
+		azure= Azure.authenticate(devCredential).withSubscription(subscriptionId);  //Only on local
+		account = azure.storageAccounts().getByResourceGroup("azureias-rg", "azureiasstorage");
+	}
 	
-	public String connect() throws IOException {
-		DefaultAzureCredential x = new DefaultAzureCredentialBuilder().build(); //Access token to resources
-		//File devCredential = new File("C:\\Users\\luigi\\git\\AzureIAS\\Application\\appconfig.json"); //Only on local
-		
-		//Authenticate with management api
-		Azure azure= Azure.authenticate(new AppServiceMSICredentials(AzureEnvironment.AZURE)).withSubscription(subscriptionId);
-		//Azure azure= Azure.authenticate(devCredential).withSubscription(subscriptionId);  //Only on local
-		
+	public String connect(){
 		//Get The account
-		StorageAccount account = azure.storageAccounts().getByResourceGroup("azureias-rg", "azureiasstorage");
+		
 		
 		BlobServiceClient blobClient = new BlobServiceClientBuilder().credential(x).endpoint(account.endPoints().primary().blob()).buildClient();
-		//String tmpName="testdefaultcredential"+UUID.randomUUID().toString().toLowerCase();
-	//	blobClient.createBlobContainer(tmpName);
-	//	blobClient.getBlobContainerClient("testdefaultcredential").getBlobClient("azz");
 		
 		//Defining permission
 		BlobSasPermission blobPermission = new BlobSasPermission()
@@ -63,16 +73,36 @@ public class StorageController {
 		BlobServiceSasQueryParameters param = builder.generateSasQueryParameters(key,"azureiasstorage");
 		
 		return param.encode();
-
-		
-		
-				
-//		String str=System.getenv("CONNECT_STR");
-//		System.out.println("String: " + str);
-//		BlobServiceClient client= new BlobServiceClientBuilder().connectionString(str).buildClient();
-//		client.createBlobContainer("" + UUID.randomUUID().toString().toLowerCase());
-		
 	
+	}
+	
+	
+	public void testmetadata() {
+		BlobServiceClient blobClient = new BlobServiceClientBuilder().credential(x).endpoint(account.endPoints().primary().blob()).buildClient();
+		
+		BlobContainerClient container= blobClient.getBlobContainerClient("default");
+		
+		BlobClient file=container.getBlobClient("img2.png");
+		HashMap<String, String> metadata= new HashMap<String, String>();
+		metadata.put("Oggetto", "Cane");
+		file.uploadFromFile("D:\\Download\\scenarioB.png",true);
+		file.setMetadata(metadata);
+		
+		PagedIterable<BlobItem> blobs = container.listBlobs();
+		System.out.println("Recuperata lista\n");
+		for(BlobItem i: blobs) {
+			System.out.println("Blob name: " + i.getName());
+		}
+		System.out.println("Dopo stampa\n");
+		ListBlobsOptions options= new ListBlobsOptions();
+		BlobListDetails detail= new BlobListDetails();
+		detail.setRetrieveMetadata(true);
+		options.setDetails(detail);
+		container.listBlobs(options, null).forEach(e->{
+			System.out.println("\nName file: " + e.getName()+'\n');
+			e.getMetadata().forEach((k,v) -> System.out.println("Key: " + k + ", value: " + v+"\n"));
+		});;
+		
 	}
 
 }
