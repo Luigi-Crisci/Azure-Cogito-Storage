@@ -1,6 +1,7 @@
 package myapp;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -8,6 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.context.embedded.JspServlet;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 
 @SpringBootApplication
 public class Application{
@@ -29,6 +34,18 @@ public class Application{
                 System.out.println(beanName);
             }
             
+        };
+    }
+    
+    @Bean
+    public EmbeddedServletContainerCustomizer containerCustomizer() {
+        return (ConfigurableEmbeddedServletContainer container) -> {
+            TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) container;
+            JspServlet servlet = tomcat.getJspServlet();
+            Map<String, String> jspServletInitParams = servlet.getInitParameters();
+            jspServletInitParams.put("compilerSourceVM", "1.8");
+            jspServletInitParams.put("compilerTargetVM", "1.8");
+            servlet.setInitParameters(jspServletInitParams);
         };
     }
 

@@ -5,5 +5,6 @@
 	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
   <display-name>Sample Spring App</display-name>
+  
 
 </web-app>

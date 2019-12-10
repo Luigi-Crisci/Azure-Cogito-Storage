@@ -39,13 +39,13 @@ public class LoginController {
 		
 	}
 	
-	@GetMapping("/account")
-	public String checkAccount(Model model) {
-		if(!model.containsAttribute("account"))
-			return "index";
-		return "account";
-		
-	}
+//	@GetMapping("/account")
+//	public String checkAccount(Model model) {
+//		if(!model.containsAttribute("account"))
+//			return "index";
+//		return "account";
+//		
+//	}
 	
 	public boolean testdb() throws ClassNotFoundException {
 		DatabaseSingleton Database = DatabaseSingleton.getInstance();

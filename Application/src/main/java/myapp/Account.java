@@ -1,10 +1,6 @@
 package myapp;
 
 
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
-
-
 public class Account {
 
 	Integer id;
