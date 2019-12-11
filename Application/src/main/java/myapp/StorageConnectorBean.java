@@ -58,7 +58,7 @@ public class StorageConnectorBean {
 	@Autowired
 	public StorageConnectorBean(Environment tmpEnv) throws IOException {
 		env=tmpEnv;
-		devCredential = new File("C:\\Users\\luigi\\git\\AzureIAS\\Application\\appconfig.json");
+		devCredential = new File("src/main/resources/appconfig.json");
 		azure= Azure.authenticate(devCredential).withSubscription(env.getProperty("azure.subid"));  //Only on local
 		//For testing
 		account = new Account();
