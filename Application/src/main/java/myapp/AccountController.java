@@ -9,6 +9,4 @@ public class AccountController {
 	
 	@Autowired(required = true)
 	private StorageConnectorBean connectorBean;
-	
-
 }

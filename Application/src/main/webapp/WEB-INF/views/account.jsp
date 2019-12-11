@@ -1,7 +1,7 @@
 <%@page import="java.util.stream.Collectors"%>
 <%@page import="java.util.stream.Collector"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="controller.*,entity.*,java.util.*,com.azure.storage.blob.models.*"%>
+    pageEncoding="ISO-8859-1" import="java.util.*,com.azure.storage.blob.models.*"%>
 <!DOCTYPE html>
 <html>
 <head>

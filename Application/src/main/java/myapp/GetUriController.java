@@ -18,12 +18,13 @@ public class GetUriController {
 
 	@Autowired
 	private StorageConnectorBean storageBeanController;
-	
+
 	@GetMapping("/account")
 	public String getUri(Model model,HttpServletRequest request) throws IOException {
 		HttpSession session = request.getSession();
 		HashMap<BlobItem,String> blobs=storageBeanController.retrieveAll();
 		session.setAttribute("Files", blobs);
 		return "account";
+
 	}
 }
