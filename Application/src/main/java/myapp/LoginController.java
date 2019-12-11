@@ -20,8 +20,13 @@ public class LoginController {
 	
 	@GetMapping("/")
 	public String index() {
-		return "index";
+		return "login";
 	}
+//	@GetMapping("/sign_up")
+//	public String sign_up_Page() {
+//		return "sign_up";
+//	}
+	
 	
 	@PostMapping("/login")
 		public String login(
