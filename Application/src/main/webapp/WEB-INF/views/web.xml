@@ -5,6 +5,15 @@
 	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
   <display-name>Sample Spring App</display-name>
+ <!--  
+  <filter>
+  	<filter-name>LoginFilter</filter-name> 
+  	<filter-class>myapp.LoginFilter</filter-class> 
+  </filter>
   
-
+  <filter-mapping>
+  	<filter-name>LoginFilter</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+	-->
 </web-app>
