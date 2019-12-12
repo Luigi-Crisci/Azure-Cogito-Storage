@@ -1,5 +1,6 @@
 package myapp;
 
+import java.awt.SystemColor;
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -16,49 +17,37 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import com.azure.core.http.HttpResponse;
+
 @Component
 @Order(1)
 public class PrimoFiltro implements Filter{
 
 	@Autowired
 	BoringLog boringLog;
+	@Autowired
+	Account account;
 	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+		
 		HttpServletRequest httpRequest=null;
+		HttpServletResponse httpResponse=null;
 		
 		httpRequest= (HttpServletRequest) request;
+		httpResponse= (HttpServletResponse) response;
+		
 		HttpServletResponse  myResponse= (HttpServletResponse) response;
 		boringLog.debug("Filter: URL"
 				+ " called: "+httpRequest.getRequestURL().toString());
+		System.out.println("mail utente "+account.getEmail());
+		System.out.println("id utente" +account.getId());
 
-		
-//		if (httpRequest.getRequestURL().toString().endsWith("/sbagliata"))	{			
-//			myResponse.addHeader("PROFE", "FILTERED");						
-//			chain.doFilter(httpRequest, myResponse);
-//			return;
-//		}
-//		if (httpRequest.getRequestURL().toString().endsWith("/login"))	{			
-//			myResponse.addHeader("PROFE", "REDIRECTED");
-//			myResponse.sendRedirect("redirected");
-//			chain.doFilter(httpRequest, myResponse);
-//			return;
-//		}
-//                if (httpRequest.getRequestURL().toString().endsWith("/sbagliata"))	{   
-//                    myResponse.setStatus(HttpStatus.BAD_GATEWAY.value());
-//		    myResponse.getOutputStream().flush();
-//		    myResponse.getOutputStream().println("-- Niente da dire --");
-//                    return; // non faccio nulla
-//                }
-//		if (httpRequest.getRequestURL().toString().endsWith("/sbagliata"))	{			
-//			myResponse.addHeader("PROFE", "CANCEL");
-//			myResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-//			myResponse.getOutputStream().flush();
-//			myResponse.getOutputStream().println("-- Output filter errore --");
-//			chain.doFilter(httpRequest, myResponse);
-//			return;
-//		}
+		if (httpRequest.getRequestURL().toString().contains("/account") && account.getEmail() == null)	{			
+			httpResponse.sendRedirect("/");
+			return;
+		}
 
 		chain.doFilter(request, response);
 	}

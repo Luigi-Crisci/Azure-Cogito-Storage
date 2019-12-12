@@ -15,7 +15,7 @@
 	<%
 		final HashMap<BlobItem,String> blobs = (HashMap<BlobItem,String>)session.getAttribute("Files");
 		if(blobs==null)
-			System.out.println("Blobs � null\n");
+			System.out.println("Blobs e' null\n");
 		Iterator<BlobItem> i=blobs.keySet().stream().iterator();
 		while(i.hasNext()){
 			BlobItem b=i.next();

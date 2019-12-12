@@ -1,12 +1,10 @@
 package myapp;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
-import java.util.Locale;
 
 import javax.servlet.http.Part;
 
@@ -46,17 +44,18 @@ public class StorageConnectorBean {
 	Environment env;
 	@Autowired
 	Logger logger;
+	@Autowired
+	Account account;
 	
 	private Azure azure;
 	private File devCredential;
 	private StorageAccount storageAccount;
 	@Value("${azure.subid}")
 	private String subId;
-	private Account account;
 	private BlobServiceClient blobClient;
 	private BlobContainerClient blobContainerClient;
 	private UserDelegationKey key;
-	final String accountName;
+	final String storageAccountName;
 	final String containerName;
 	
 	@Autowired
@@ -64,16 +63,13 @@ public class StorageConnectorBean {
 		env=tmpEnv;
 		Resource resource = new ClassPathResource("appconfig.json");
 		devCredential = new File(resource.getURI());
+		
 		azure= Azure.authenticate(devCredential).withSubscription(env.getProperty("azure.subid"));  //Only on local
-		//For testing
-		account = new Account();
-		account.setId(3);
-		account.setNome("Luigi");
-		//
-		accountName = env.getProperty("azure.account-name")+account.getId();
+
+		storageAccountName = env.getProperty("azure.account-name")+account.getId();
 		containerName = env.getProperty("azure.default-container");
 		
-		storageAccount = azure.storageAccounts().getByResourceGroup(env.getProperty("azure.resource-group"),accountName);
+		storageAccount = azure.storageAccounts().getByResourceGroup(env.getProperty("azure.resource-group"),storageAccountName);
 		if(storageAccount==null) registerAccount();
 		blobClient = new BlobServiceClientBuilder().credential(new DefaultAzureCredentialBuilder().build())
 				.endpoint(storageAccount.endPoints().primary().blob()).buildClient(); 
@@ -121,7 +117,7 @@ public class StorageConnectorBean {
 				.setBlobName(blob.getName())
 				.setPermissions(blobPermission);
 		
-		BlobServiceSasQueryParameters param = builder.generateSasQueryParameters(key,accountName);
+		BlobServiceSasQueryParameters param = builder.generateSasQueryParameters(key,storageAccountName);
 		return String.format("https://%s.blob.core.windows.net/default/%s?%s", storageAccount.name(),blob.getName(),param.encode());
 	}
 	
@@ -132,7 +128,7 @@ public class StorageConnectorBean {
 	public boolean registerAccount() {
 		try{
 			//Register a new Storage Account for an account
-			storageAccount = azure.storageAccounts().define(accountName)
+			storageAccount = azure.storageAccounts().define(storageAccountName)
 							.withRegion(Region.EUROPE_WEST)
 							.withExistingResourceGroup(env.getProperty("azure.resource-group"))
 							.withOnlyHttpsTraffic()
