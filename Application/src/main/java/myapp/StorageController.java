@@ -44,7 +44,7 @@ public class StorageController {
 
 	public StorageController() throws IOException {
 		x = new DefaultAzureCredentialBuilder().build();
-		devCredential = new File("C:\\Users\\luigi\\git\\AzureIAS\\Application\\appconfig.json"); //Only on local
+		devCredential = new File("appconfig.json"); //Only on local
 		//azure= Azure.authenticate(new AppServiceMSICredentials(AzureEnvironment.AZURE)).withSubscription(subscriptionId);
 		azure= Azure.authenticate(devCredential).withSubscription(subscriptionId);  //Only on local
 		account = azure.storageAccounts().getByResourceGroup("azureias-rg", "azureiasstorage");

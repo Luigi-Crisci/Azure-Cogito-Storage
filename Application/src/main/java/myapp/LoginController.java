@@ -1,11 +1,14 @@
 package myapp;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 import myapp.Account;
@@ -18,27 +21,59 @@ public class LoginController {
 	
 	@GetMapping("/")
 	public String index() {
-		return "index";
+		return "login";
 	}
+//	@GetMapping("/sign_up")
+//	public String sign_up_Page() {
+//		return "sign_up";
+//	}
+	
 	
 	@PostMapping("/login")
-		public String login(@RequestParam(name = "name",required = true) String name, @RequestParam(name = "password", required = true) String password, Model model ) throws ClassNotFoundException {
-		System.out.println("name: " + name + " password: " + password + "\n");
+		public String login(
+				@RequestParam(name = "mailAddress",required = true) String mailAddress,
+				@RequestParam(name = "passwd", required = true) String password_ins)throws ClassNotFoundException {
 		
-		//DatabaseSingleton Database = DatabaseSingleton.getInstance();
-		String query="INSERT INTO DBO.UTENTE (email, password_auth) VALUES ('peppeXXX@test.it', 'test')";
+		DatabaseSingleton Database = DatabaseSingleton.getInstance();
+		String query="select password from [dbo].[utente] where email = '"+ mailAddress +"';";
+		ResultSet rs = Database.EseguiQuery(query);
+		try {
+			while(rs.next())
+			{
+				if( password_ins.equals(rs.getString(1))) {
+					System.out.println("Password corretta");
+					return "/account"; //ovvero la view dove stanno i file dell'utente
+				}
+				else {
+					System.out.println("Password errata");
+					return "/index";
+				}
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
-		if(name.equals("luigi") && password.equals("root")) {
-			//Database.EseguiQuery(query);
-			account.setNome(name);
-			model.addAttribute("account", account);
-			return "account";
-		}
-		else {
-			return "index";
-		}
+		
+		return "";
+		
+
+		
+//		if(name.equals("luigi") && password.equals("root")) {
+//			//Database.EseguiQuery(query);
+//			account.setNome(name);
+//			model.addAttribute("account", account);
+//			return "account";
+//		}
+//		else {
+//			return "index";
+//		}
 		
 	}
+	
+
+	
 	
 //	@GetMapping("/account")
 //	public String checkAccount(Model model) {
@@ -47,14 +82,5 @@ public class LoginController {
 //		return "account";
 //		
 //	}
-	
-	public boolean testdb() throws ClassNotFoundException {
-		DatabaseSingleton Database = DatabaseSingleton.getInstance();
-		String query="INSERT INTO DBO.UTENTE (email, password_auth) VALUES ('peppeXXX@test.it', 'test')";
-		Database.EseguiQuery(query);
-		return true;
-	}
-	
-
 
 }

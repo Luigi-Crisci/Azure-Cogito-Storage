@@ -1,7 +1,7 @@
 <%@page import="java.util.stream.Collectors"%>
 <%@page import="java.util.stream.Collector"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="controller.*,entity.*,java.util.*,com.azure.storage.blob.models.*"%>
+   pageEncoding="ISO-8859-1" import="java.util.*,com.azure.storage.blob.models.*"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +15,7 @@
 	<%
 		final HashMap<BlobItem,String> blobs = (HashMap<BlobItem,String>)session.getAttribute("Files");
 		if(blobs==null)
-			System.out.println("Blobs è null\n");
+			System.out.println("Blobs ï¿½ null\n");
 		Iterator<BlobItem> i=blobs.keySet().stream().iterator();
 		while(i.hasNext()){
 			BlobItem b=i.next();
