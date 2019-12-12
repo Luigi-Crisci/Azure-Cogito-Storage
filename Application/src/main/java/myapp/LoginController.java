@@ -13,7 +13,7 @@ import myapp.Account;
 @Controller
 public class LoginController {
 	
-	@Autowired
+
 	private Account account;
 	
 	@GetMapping("/")

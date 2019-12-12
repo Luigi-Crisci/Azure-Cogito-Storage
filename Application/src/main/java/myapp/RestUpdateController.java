@@ -23,7 +23,11 @@ public class RestUpdateController {
 	@Autowired
 	Environment env;
 	@Autowired
+	Account utente;
+	@Autowired
 	Logger logger;
+	@Autowired
+	StorageConnectorBean storageControllerBean;
 	
 	/**
 	 * Upload a file from a form
@@ -36,6 +40,7 @@ public class RestUpdateController {
 		if(file==null)
 			return new ResponseEntity<>("Secelt a file",HttpStatus.OK);
 		try {
+			
 			saveUploadFile(file);
 		}catch (Exception e) {
 			logger.error(e.toString());
@@ -52,9 +57,12 @@ public class RestUpdateController {
 	 */
 	public void saveUploadFile(Part file) throws IOException {
 		//Select tmp file position
-		String path=env.getProperty("file.tmp-position");
+		/**String path=env.getProperty("file.tmp-position");
 		Path savePath=Paths.get(String.format("%s%s%s", path,File.separator,file.getSubmittedFileName()));
 		Files.createDirectories(savePath.getParent()); //Create directories if not existing
+		
+		
+		
 		
 		//Write file 20Mb at time
 		FileOutputStream fileOutputStream = new FileOutputStream(savePath.toString());
@@ -69,6 +77,9 @@ public class RestUpdateController {
 		
 		fileOutputStream.close();
 		fileStream.close();
+		*/
+		
+		storageControllerBean.uploadFile(file);
 	}
 
 }

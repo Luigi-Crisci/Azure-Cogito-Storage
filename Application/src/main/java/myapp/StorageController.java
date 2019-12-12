@@ -50,9 +50,7 @@ public class StorageController {
 		account = azure.storageAccounts().getByResourceGroup("azureias-rg", "azureiasstorage");
 	}
 	
-	public String connect(){
-		//Get The account
-		
+	public String connect(){		
 		
 		BlobServiceClient blobClient = new BlobServiceClientBuilder().credential(x).endpoint(account.endPoints().primary().blob()).buildClient();
 		

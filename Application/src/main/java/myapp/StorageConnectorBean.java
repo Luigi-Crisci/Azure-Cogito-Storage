@@ -1,19 +1,25 @@
 package myapp;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Locale;
 
+import javax.servlet.http.Part;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
 import com.azure.core.http.rest.PagedIterable;
-import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -26,15 +32,11 @@ import com.azure.storage.blob.models.UserDelegationKey;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasQueryParameters;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
+import com.azure.storage.blob.specialized.BlobOutputStream;
 import com.azure.storage.common.sas.SasProtocol;
 import com.microsoft.azure.management.Azure;
-import com.microsoft.azure.management.batch.PoolProvisioningState;
-import com.microsoft.azure.management.keyvault.StoragePermissions;
 import com.microsoft.azure.management.resources.fluentcore.arm.Region;
-import com.microsoft.azure.management.resources.fluentcore.model.Creatable;
-import com.microsoft.azure.management.storage.ProvisioningState;
 import com.microsoft.azure.management.storage.StorageAccount;
-import com.microsoft.azure.management.storage.Permissions;
 
 @Service
 @SessionScope
@@ -42,6 +44,8 @@ public class StorageConnectorBean {
 
 	@Autowired
 	Environment env;
+	@Autowired
+	Logger logger;
 	
 	private Azure azure;
 	private File devCredential;
@@ -58,7 +62,8 @@ public class StorageConnectorBean {
 	@Autowired
 	public StorageConnectorBean(Environment tmpEnv) throws IOException {
 		env=tmpEnv;
-		devCredential = new File("src/main/resources/appconfig.json");
+		Resource resource = new ClassPathResource("appconfig.json");
+		devCredential = new File(resource.getURI());
 		azure= Azure.authenticate(devCredential).withSubscription(env.getProperty("azure.subid"));  //Only on local
 		//For testing
 		account = new Account();
@@ -138,6 +143,29 @@ public class StorageConnectorBean {
 		}catch(Exception e) {
 			return false;
 		}
+	}
+	
+	/**
+	 * Upload file to user account. If a path is specified, it will create the directory tree too
+	 * @param file
+	 * @throws IOException
+	 */
+	public void uploadFile(Part file) throws IOException {
+		
+		BlobClient blobClient=blobContainerClient.getBlobClient(file.getSubmittedFileName());
+		BlobOutputStream blobOutputStream=blobClient.getBlockBlobClient().getBlobOutputStream();
+		InputStream fileStream = file.getInputStream();
+		byte[] b= new byte[20*1024*1024];
+		logger.info(String.format("Writing file %s to %s\n", file.getSubmittedFileName(),blobClient.getBlobUrl()));
+		int numBytesRead;
+		while ((numBytesRead=fileStream.read(b, 0, b.length))>0) {
+			blobOutputStream.write(b,0,numBytesRead);
+		}
+		logger.info(String.format("Saved ad position: %s", blobClient.getBlobUrl()));
+		
+		blobOutputStream.close();
+		fileStream.close();
+		
 	}
 	
 	
