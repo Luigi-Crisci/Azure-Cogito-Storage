@@ -3,19 +3,22 @@ package myapp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import myapp.Account;
 
 @Controller
 public class LoginController {
 	
+	@Autowired
 	private Account account;
 	
 	@GetMapping("/")
@@ -29,7 +32,7 @@ public class LoginController {
 	
 	
 	@PostMapping("/login")
-		public String login(
+	public String login(
 				@RequestParam(name = "mailAddress",required = true) String mailAddress,
 				@RequestParam(name = "passwd", required = true) String password_ins)throws ClassNotFoundException {
 		
@@ -40,12 +43,13 @@ public class LoginController {
 			while(rs.next())
 			{
 				if( password_ins.equals(rs.getString(1))) {
+					System.out.println("Password inserita: "+ password_ins +" Password in database: "+ rs.getString(1));
 					System.out.println("Password corretta");
-					return "/account"; //ovvero la view dove stanno i file dell'utente
+					return "account"; //ovvero la view dove stanno i file dell'utente
 				}
 				else {
-					System.out.println("Password errata");
-					return "/index";
+					System.out.println("Password errata o non sei registrato");
+					return "sign_up";
 				}
 				
 			}

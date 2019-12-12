@@ -39,8 +39,9 @@
                      </div class="form-group">
                </fieldset>
                <button type="submit" class="btn btn-primary">Login</button>
-               <button type="submit" class="btn btn-primary" name="sign_up_page">Sign up</button>
+               
             </form>
+            <button type="submit" class="btn btn-primary" name="sign_up_page">Sign up</button>
             </div>
             <div class="col-md-2"></div>
          </div>

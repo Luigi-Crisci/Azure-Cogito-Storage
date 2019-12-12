@@ -1,8 +1,14 @@
 package myapp;
 
 
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
+
+@Component
+@SessionScope
 public class Account {
-	//da public a private
+	
+	//da public a private	
 	private Integer id;
 	private String email;
 	private String first_name;
