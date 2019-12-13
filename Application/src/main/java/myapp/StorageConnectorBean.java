@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Part;
 
@@ -35,17 +36,26 @@ import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.BlobOutputStream;
 import com.azure.storage.common.sas.SasProtocol;
 import com.microsoft.azure.management.Azure;
+import com.microsoft.azure.management.appservice.FunctionApp;
 import com.microsoft.azure.management.resources.fluentcore.arm.Region;
 import com.microsoft.azure.management.storage.StorageAccount;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okio.BufferedSink;
 
 @Service
 @SessionScope
 public class StorageConnectorBean {
 
+	private static OkHttpClient httpClient;
 	@Autowired
-	Environment env;
+	private Environment env;
 	@Autowired
-	Logger logger;
+	private Logger logger;
+	@Autowired
+	private CognitiveUploadService cognitiveUploadService;
 	
 	private Azure azure;
 	private File devCredential;
@@ -53,35 +63,40 @@ public class StorageConnectorBean {
 	@Value("${azure.subid}")
 	private String subId;
 	private Account account;
-	private BlobServiceClient blobClient;
+	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient blobContainerClient;
 	private UserDelegationKey key;
-	final String accountName;
+	final String storageAccountName;
 	final String containerName;
 	
 	@Autowired
 	public StorageConnectorBean(Environment tmpEnv) throws IOException {
 		env=tmpEnv;
+		
+		//Get JSON Authentication file
 		Resource resource = new ClassPathResource("appconfig.json");
 		devCredential = new File(resource.getURI());
+		
+		//Authenticate my app
 		azure= Azure.authenticate(devCredential).withSubscription(env.getProperty("azure.subid"));  //Only on local
+		
 		//For testing
 		account = new Account();
 		account.setId(3);
 		account.setNome("Luigi");
 		//
-		accountName = env.getProperty("azure.account-name")+account.getId();
+		storageAccountName = env.getProperty("azure.account-name")+account.getId();
 		containerName = env.getProperty("azure.default-container");
 		
-		storageAccount = azure.storageAccounts().getByResourceGroup(env.getProperty("azure.resource-group"),accountName);
+		storageAccount = azure.storageAccounts().getByResourceGroup(env.getProperty("azure.resource-group"),storageAccountName);
 		if(storageAccount==null) registerAccount();
-		blobClient = new BlobServiceClientBuilder().credential(new DefaultAzureCredentialBuilder().build())
+		blobServiceClient = new BlobServiceClientBuilder().credential(new DefaultAzureCredentialBuilder().build())
 				.endpoint(storageAccount.endPoints().primary().blob()).buildClient(); 
 		
 		//Get reference to Container
-		blobContainerClient=blobClient.getBlobContainerClient(containerName);
+		blobContainerClient=blobServiceClient.getBlobContainerClient(containerName);
 		if(!blobContainerClient.exists())
-			blobContainerClient=blobClient.createBlobContainer(containerName);
+			blobContainerClient=blobServiceClient.createBlobContainer(containerName);
 
 	}
 	
@@ -92,7 +107,7 @@ public class StorageConnectorBean {
 	public HashMap<BlobItem,String> retrieveAll(){
 		//Generate a new key only if is not expired
 		if(key!=null) key.setSignedExpiry(OffsetDateTime.now().plusHours(1));
-		else key= blobClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
+		else key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
 		
 		//Generate String for each blob
 		HashMap<BlobItem,String> mappedBlobs= new HashMap<BlobItem, String>();
@@ -100,16 +115,16 @@ public class StorageConnectorBean {
 		BlobListDetails detail= new BlobListDetails();
 		detail.setRetrieveMetadata(true);
 		options.setDetails(detail);
-		PagedIterable<BlobItem> blobs=blobClient.getBlobContainerClient(containerName).listBlobs(options,null);
+		PagedIterable<BlobItem> blobs=blobServiceClient.getBlobContainerClient(containerName).listBlobs(options,null);
 		
 		blobs.forEach(e->{
 			System.out.println("Name file: " + e.getName()+'\n');
-			mappedBlobs.put(e, createAccessLink(e,key));});
+			mappedBlobs.put(e, createAccessLink(e.getName(),key));});
 
 		return mappedBlobs;
 	}
 	
-	public String createAccessLink(BlobItem blob,UserDelegationKey key){
+	public String createAccessLink(String blobName,UserDelegationKey key){
 		BlobSasPermission blobPermission = new BlobSasPermission()
 			    .setReadPermission(true)
 			    .setWritePermission(true);
@@ -118,11 +133,11 @@ public class StorageConnectorBean {
 				.setProtocol(SasProtocol.HTTPS_ONLY)
 				.setExpiryTime(OffsetDateTime.now().plusDays(2))
 				.setContainerName(containerName)
-				.setBlobName(blob.getName())
+				.setBlobName(blobName)
 				.setPermissions(blobPermission);
 		
-		BlobServiceSasQueryParameters param = builder.generateSasQueryParameters(key,accountName);
-		return String.format("https://%s.blob.core.windows.net/default/%s?%s", storageAccount.name(),blob.getName(),param.encode());
+		BlobServiceSasQueryParameters param = builder.generateSasQueryParameters(key,storageAccountName);
+		return String.format("https://%s.blob.core.windows.net/default/%s?%s", storageAccount.name(),blobName,param.encode());
 	}
 	
 	/**
@@ -132,7 +147,7 @@ public class StorageConnectorBean {
 	public boolean registerAccount() {
 		try{
 			//Register a new Storage Account for an account
-			storageAccount = azure.storageAccounts().define(accountName)
+			storageAccount = azure.storageAccounts().define(storageAccountName)
 							.withRegion(Region.EUROPE_WEST)
 							.withExistingResourceGroup(env.getProperty("azure.resource-group"))
 							.withOnlyHttpsTraffic()
@@ -151,7 +166,7 @@ public class StorageConnectorBean {
 	 * @throws IOException
 	 */
 	public void uploadFile(Part file) throws IOException {
-		
+		BlobItem blob = new BlobItem();
 		BlobClient blobClient=blobContainerClient.getBlobClient(file.getSubmittedFileName());
 		BlobOutputStream blobOutputStream=blobClient.getBlockBlobClient().getBlobOutputStream();
 		InputStream fileStream = file.getInputStream();
@@ -166,8 +181,36 @@ public class StorageConnectorBean {
 		blobOutputStream.close();
 		fileStream.close();
 		
+		//Setting file metadata
+		if(key!=null) key.setSignedExpiry(OffsetDateTime.now().plusHours(1));
+		else key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
+		
+		HashMap<String,String> metadata=cognitiveUploadService.getMetadata(file,createAccessLink(blobClient.getBlobName(), key)); //Set medatada for blob
+		if(metadata!=null) 
+			blobClient.setMetadata(metadata);
 	}
 	
+	/**
+	 * Set metadata for a blob
+	 * @param blob
+	 */
+/**	public void setMetadata(BlobClient blob) {
+		
+		final String cognitiveUrl=
+		
+		final String url = "https://imagemetadatasetting.azurewebsites.net/api/GenerateMetadataAndSave?code=210xjcVwnzfC7v4d8Sd/SxFdFYlkWgdoFSEoJHlli/TOyQZzZeCA7Q==";
+		Request request = new Request.Builder().url(url).build();
+		try {
+			httpClient.newCall(request).execute();
+		}
+		catch (Exception e) {
+			
+		}
+	}
+*/
+	 static {
+	        httpClient = new OkHttpClient.Builder().readTimeout(1, TimeUnit.MINUTES).build();
+	    }
 	
 
 }
