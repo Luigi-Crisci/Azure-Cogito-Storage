@@ -1,13 +1,19 @@
 package myapp;
 
+import java.util.List;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.servlet.http.Part;
 
@@ -50,6 +56,7 @@ import okio.BufferedSink;
 public class StorageConnectorBean {
 
 	private static OkHttpClient httpClient;
+	private static Pattern pattern;
 	@Autowired
 	private Environment env;
 	@Autowired
@@ -101,28 +108,57 @@ public class StorageConnectorBean {
 	}
 	
 	/**
-	 * Retrieve all blobs from the current user
+	 * Retrieve blobs from the current user
+	 * @param path root path of retrieved blobs
 	 * @return each blob with a sas link key associated
 	 */
-	public HashMap<BlobItem,String> retrieveAll(){
+	public List<BlobItemKeyStruct> retrieve(String path){
 		//Generate a new key only if is not expired
 		if(key!=null) key.setSignedExpiry(OffsetDateTime.now().plusHours(1));
 		else key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
 		
 		//Generate String for each blob
-		HashMap<BlobItem,String> mappedBlobs= new HashMap<BlobItem, String>();
+		//HashMap<BlobItem,String> mappedBlobs= new HashMap<BlobItem, String>();
 		ListBlobsOptions options= new ListBlobsOptions();
 		BlobListDetails detail= new BlobListDetails();
 		detail.setRetrieveMetadata(true);
 		options.setDetails(detail);
-		PagedIterable<BlobItem> blobs=blobServiceClient.getBlobContainerClient(containerName).listBlobs(options,null);
 		
-		blobs.forEach(e->{
-			System.out.println("Name file: " + e.getName()+'\n');
-			mappedBlobs.put(e, createAccessLink(e.getName(),key));});
-
-		return mappedBlobs;
+		PagedIterable<BlobItem> blobs=blobContainerClient.listBlobs(options,null);
+		List<BlobItemKeyStruct> blobsList= new ArrayList<BlobItemKeyStruct>();
+		
+		//Omega tarantella
+		String regexPath=path.replaceAll("\\/", "\\/");
+		blobs.stream()
+		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w.%-]*", e.getName()))
+		.forEach(e->{
+			final String name = e.getName();
+			String trueName= name.contains("/") ? name.substring(name.lastIndexOf('/')+1) : name;
+			blobsList.add(new BlobItemKeyStruct(e, createAccessLink(name,key), false, trueName));
+		});
+		
+		//Get directories
+		blobs.stream()
+				.filter(e-> Pattern.matches(regexPath+"[\\/]{0,1}[\\w.%-]*[\\/]{1}[\\w.%-]*", e.getName()))
+				.map(e->{
+					String x = e.getName();
+					if(x.indexOf('/', path.length())!=-1)
+						return x.substring(path.length(), (x.indexOf('/', path.length())+1));
+					else
+						return x;
+				})
+				.distinct()
+				.forEach(e->blobsList.
+						add(new BlobItemKeyStruct(null, String.format("/account?dir=%s%s", path,e), true,e)));
+		
+		for(BlobItemKeyStruct x : blobsList) {
+			System.out.println(x.toString());
+		}
+		
+		blobsList.sort((a,b)-> a.getTrueName().compareTo(b.getTrueName())); //Sort item
+		return blobsList;
 	}
+	
 	
 	public String createAccessLink(String blobName,UserDelegationKey key){
 		BlobSasPermission blobPermission = new BlobSasPermission()
@@ -165,9 +201,9 @@ public class StorageConnectorBean {
 	 * @param file
 	 * @throws IOException
 	 */
-	public void uploadFile(Part file) throws IOException {
+	public void uploadFile(Part file,String path) throws IOException{
 		BlobItem blob = new BlobItem();
-		BlobClient blobClient=blobContainerClient.getBlobClient(file.getSubmittedFileName());
+		BlobClient blobClient=blobContainerClient.getBlobClient(path+file.getSubmittedFileName());
 		BlobOutputStream blobOutputStream=blobClient.getBlockBlobClient().getBlobOutputStream();
 		InputStream fileStream = file.getInputStream();
 		byte[] b= new byte[20*1024*1024];
@@ -190,27 +226,36 @@ public class StorageConnectorBean {
 			blobClient.setMetadata(metadata);
 	}
 	
-	/**
-	 * Set metadata for a blob
-	 * @param blob
-	 */
-/**	public void setMetadata(BlobClient blob) {
-		
-		final String cognitiveUrl=
-		
-		final String url = "https://imagemetadatasetting.azurewebsites.net/api/GenerateMetadataAndSave?code=210xjcVwnzfC7v4d8Sd/SxFdFYlkWgdoFSEoJHlli/TOyQZzZeCA7Q==";
-		Request request = new Request.Builder().url(url).build();
-		try {
-			httpClient.newCall(request).execute();
-		}
-		catch (Exception e) {
-			
+	
+	public boolean createDir(String nameDir,String path) {
+		try{
+			uploadFile(UploadUtils.blankFile,path+nameDir+'/');
+			return true;
+		}catch (Exception e) {
+			return false;
 		}
 	}
-*/
-	 static {
-	        httpClient = new OkHttpClient.Builder().readTimeout(1, TimeUnit.MINUTES).build();
-	    }
 	
+	/**
+	 * Search blobs in according to a query
+	 * @param query the string that a blob must contain (in name or tags)
+	 * @return the blobs list
+	 */
+	public List<BlobItemKeyStruct> search(String query){
+		List<BlobItemKeyStruct> blobs = retrieve("");
+		for(BlobItemKeyStruct blob: blobs) {
+			Map<String,String> metadata=blob.getItem().getMetadata();
+			
+			//Get metadata, null if no tags are found
+			List<String> tags=metadata.containsKey("tags") ? 
+								Arrays.asList(metadata.get("tags").split(",")) :
+								null;
+								
+			if(!(blob.getTrueName().contains(query) || (tags!=null && tags.contains(query))))
+					blobs.remove(blob);
+		}
+		return blobs;
+	}
+
 
 }

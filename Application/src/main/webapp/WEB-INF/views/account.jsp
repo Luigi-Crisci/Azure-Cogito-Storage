@@ -1,3 +1,4 @@
+<%@page import="myapp.BlobItemKeyStruct"%>
 <%@page import="java.util.stream.Collectors"%>
 <%@page import="java.util.stream.Collector"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
@@ -11,25 +12,39 @@
 <body>
 	<h1> Ciao</h1>
 	
+	<div>
+	<form method="post" action="/account/search">
+	Search: <input type="text" name="query">
+	</form>
+	</div>
+	
 	<table>
 	<%
-		final HashMap<BlobItem,String> blobs = (HashMap<BlobItem,String>)session.getAttribute("Files");
+	
+	
+		final List<BlobItemKeyStruct> blobs=(List<BlobItemKeyStruct>) session.getAttribute("Files");
+		//final HashMap<BlobItem,String> blobs = (HashMap<BlobItem,String>)session.getAttribute("Files");
 		if(blobs==null)
 			System.out.println("Blobs � null\n");
-		Iterator<BlobItem> i=blobs.keySet().stream().iterator();
-		while(i.hasNext()){
-			BlobItem b=i.next();
-			String key=blobs.get(b);
+		
+		//Iterator<BlobItem> i=blobs.keySet().stream().iterator(); //Iterator
+		//List<BlobItem> list=Arrays.asList(blobs.keySet().toArray(new BlobItem[0])); //List
+		//while(i.hasNext()){
+			for(BlobItemKeyStruct b : blobs){
+			String key=b.getKey();
 			%>
 			<tr>
-				<td><a href="<%=key%>"><%=b.getName()%></a> </td>
+				<td><a href="<%=key%>"><%=b.getTrueName()%></a> </td>
 			</tr>
 			<%
 		}
 	%>
 	</table>
 
-	
+<form method="post" id="createDirForm">
+Directory name: <input type="text" name="dirName">
+<input type="submit" value="Crea cartella" id="createDirSubmit">
+</form>
 	
 <form method="POST" enctype="multipart/form-data" id="fileUploadForm">
     <input type="text" name="extraField"/><br/><br/>
