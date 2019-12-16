@@ -20,25 +20,16 @@
 	
 	<table>
 	<%
-	
-	
 		final List<BlobItemKeyStruct> blobs=(List<BlobItemKeyStruct>) session.getAttribute("Files");
-		//final HashMap<BlobItem,String> blobs = (HashMap<BlobItem,String>)session.getAttribute("Files");
-		if(blobs==null)
-			System.out.println("Blobs � null\n");
-		
-		//Iterator<BlobItem> i=blobs.keySet().stream().iterator(); //Iterator
-		//List<BlobItem> list=Arrays.asList(blobs.keySet().toArray(new BlobItem[0])); //List
-		//while(i.hasNext()){
-			for(BlobItemKeyStruct b : blobs){
+		for(BlobItemKeyStruct b : blobs){
 			String key=b.getKey();
 			%>
 			<tr>
 				<td><a href="<%=key%>"><%=b.getTrueName()%></a> </td>
 			</tr>
 			<%
-		}
-	%>
+			}
+		%>
 	</table>
 
 <form method="post" id="createDirForm">

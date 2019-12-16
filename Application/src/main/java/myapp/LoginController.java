@@ -21,6 +21,8 @@ public class LoginController {
 	@Autowired
 	private Account account;
 	
+	
+	
 	@GetMapping("/")
 	public String index() {
 		return "login";
@@ -29,21 +31,21 @@ public class LoginController {
 //	public String sign_up_Page() {
 //		return "sign_up";
 //	}
-	
-	
 	@PostMapping("/login")
 	public String login(
 				@RequestParam(name = "mailAddress",required = true) String mailAddress,
 				@RequestParam(name = "passwd", required = true) String password_ins)throws ClassNotFoundException {
 		
 		DatabaseSingleton Database = DatabaseSingleton.getInstance();
-		String query="select password from [dbo].[utente] where email = '"+ mailAddress +"';";
+		String query="select id, password from [dbo].[utente] where email = '"+ mailAddress +"';";
 		ResultSet rs = Database.EseguiQuery(query);
 		try {
 			while(rs.next())
 			{
-				if( password_ins.equals(rs.getString(1))) {
-					System.out.println("Password inserita: "+ password_ins +" Password in database: "+ rs.getString(1));
+				if( password_ins.equals(rs.getString(2))) {
+					account.setEmail(mailAddress);
+					account.setId(rs.getInt(1));
+					System.out.println("Password inserita: "+ password_ins + " \n " + " Password in database: "+ rs.getString(1));
 					System.out.println("Password corretta");
 					return "account"; //ovvero la view dove stanno i file dell'utente
 				}
@@ -60,9 +62,6 @@ public class LoginController {
 		
 		
 		return "";
-		
-
-		
 //		if(name.equals("luigi") && password.equals("root")) {
 //			//Database.EseguiQuery(query);
 //			account.setNome(name);

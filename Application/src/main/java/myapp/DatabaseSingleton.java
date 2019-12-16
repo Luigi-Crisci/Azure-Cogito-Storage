@@ -26,6 +26,7 @@ public class DatabaseSingleton
                     + "trustServerCertificate=false;"
                     + "hostNameInCertificate=*.database.windows.net;"
                     + "loginTimeout=30;";	
+
 	
 	private DatabaseSingleton() throws ClassNotFoundException
 	{
