@@ -35,13 +35,16 @@ public class RestUpdateController {
 	 * @return
 	 */
 	@PostMapping("/account/upload")
-	public ResponseEntity<?> upload(@RequestParam(name = "files") Part file){
+	public ResponseEntity<?> upload(@RequestParam(name = "files") Part file, 
+			@RequestParam(name = "dir",required = false, defaultValue = "") String dir){
+		
 		logger.info("Received file to upload");
 		if(file==null)
 			return new ResponseEntity<>("Secelt a file",HttpStatus.OK);
 		try {
 			
-			saveUploadFile(file);
+			storageControllerBean.uploadFile(file,dir);
+		
 		}catch (Exception e) {
 			logger.error(e.toString());
 			return new ResponseEntity<>("Error while uploading, please try again",HttpStatus.INTERNAL_SERVER_ERROR);
@@ -49,37 +52,5 @@ public class RestUpdateController {
 		return new ResponseEntity<>("successfully uploaded!",HttpStatus.OK);
 	}
 	
-	
-	/**
-	 * Save a file to the path specified as default in the Environment
-	 * @param file
-	 * @throws IOException
-	 */
-	public void saveUploadFile(Part file) throws IOException {
-		//Select tmp file position
-		/**String path=env.getProperty("file.tmp-position");
-		Path savePath=Paths.get(String.format("%s%s%s", path,File.separator,file.getSubmittedFileName()));
-		Files.createDirectories(savePath.getParent()); //Create directories if not existing
-		
-		
-		
-		
-		//Write file 20Mb at time
-		FileOutputStream fileOutputStream = new FileOutputStream(savePath.toString());
-		InputStream fileStream = file.getInputStream();
-		byte[] b= new byte[20*1024*1024];
-		logger.info("Writing file..\n");
-		int numBytesRead;
-		while ((numBytesRead=fileStream.read(b, 0, b.length))>0) {
-			fileOutputStream.write(b,0,numBytesRead);
-		}
-		logger.info(String.format("Saved ad position: %s", savePath));
-		
-		fileOutputStream.close();
-		fileStream.close();
-		*/
-		
-		storageControllerBean.uploadFile(file);
-	}
 
 }
