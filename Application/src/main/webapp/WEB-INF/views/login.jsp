@@ -64,10 +64,11 @@
 							</div>
 						</div>
 					</fieldset>
-					<button type="submit" id="buttonLogin"
+					<button type="submit" id="buttonLoginx"
 						class="btn btn-primary btn-lg btn-block">Login</button>
+						<br>
 					<a href="sign_up">
-						<button type="submit" id="buttonLogin"
+						<button type="submit" id="buttonLoginx"
 							class="btn btn-primary btn-lg btn-block">Sign up</button>
 					</a>
 				</form>
