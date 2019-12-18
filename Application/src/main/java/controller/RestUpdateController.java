@@ -1,12 +1,5 @@
-package myapp;
+package controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import javax.servlet.http.Part;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import entity.Account;
+import service.StorageService;
 
 @RestController
 public class RestUpdateController {
@@ -27,7 +23,7 @@ public class RestUpdateController {
 	@Autowired
 	Logger logger;
 	@Autowired
-	StorageConnectorBean storageControllerBean;
+	StorageService storageControllerBean;
 	
 	/**
 	 * Upload a file from a form

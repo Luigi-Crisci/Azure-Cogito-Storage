@@ -1,6 +1,5 @@
-package myapp;
+package filter;
 
-import java.awt.SystemColor;
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -19,9 +18,12 @@ import org.springframework.stereotype.Component;
 
 import com.azure.core.http.HttpResponse;
 
-@Component
-@Order(1)
-public class PrimoFiltro implements Filter{
+import entity.Account;
+import entity.BoringLog;
+
+//@Component
+//@Order(1)
+public class LoginFilter implements Filter{
 
 	@Autowired
 	BoringLog boringLog;

@@ -15,7 +15,7 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 import org.springframework.boot.context.embedded.JspServlet;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"controller,service,entity,filter,utility"})
 public class Application extends SpringBootServletInitializer{
 	
 

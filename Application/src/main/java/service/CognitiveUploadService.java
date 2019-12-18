@@ -1,6 +1,9 @@
-package myapp;
+package service;
 
 import org.springframework.stereotype.Service;
+
+import utility.UploadUtils;
+
 import java.net.URI;
 import java.util.HashMap;
 

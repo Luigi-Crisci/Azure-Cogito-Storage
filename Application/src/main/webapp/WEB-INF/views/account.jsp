@@ -1,4 +1,4 @@
-<%@page import="myapp.BlobItemKeyStruct"%>
+<%@page import="entity.BlobItemKeyStruct"%>
 <%@page import="java.util.stream.Collectors"%>
 <%@page import="java.util.stream.Collector"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"

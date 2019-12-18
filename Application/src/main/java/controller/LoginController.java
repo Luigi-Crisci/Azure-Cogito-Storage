@@ -1,4 +1,4 @@
-package myapp;
+package controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import myapp.Account;
+import entity.Account;
+import utility.DatabaseSingleton;
 
 @Controller
 public class LoginController {
@@ -21,16 +22,12 @@ public class LoginController {
 	@Autowired
 	private Account account;
 	
-	
-	
 	@GetMapping("/")
 	public String index() {
 		return "login";
 	}
-//	@GetMapping("/sign_up")
-//	public String sign_up_Page() {
-//		return "sign_up";
-//	}
+
+	
 	@PostMapping("/login")
 	public String login(
 				@RequestParam(name = "mailAddress",required = true) String mailAddress,
@@ -47,7 +44,7 @@ public class LoginController {
 					account.setId(rs.getInt(1));
 					System.out.println("Password inserita: "+ password_ins + " \n " + " Password in database: "+ rs.getString(1));
 					System.out.println("Password corretta");
-					return "account"; //ovvero la view dove stanno i file dell'utente
+					return "redirect:/account"; 
 				}
 				else {
 					System.out.println("Password errata o non sei registrato");

@@ -1,4 +1,4 @@
-package myapp;
+package controller;
 
 import java.sql.ResultSet;
 
@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import entity.Account;
+import utility.DatabaseSingleton;
+
 @Controller
-public class Sign_upController {
+public class SignUpController {
 	@Autowired
 	public Account utente;
 	
