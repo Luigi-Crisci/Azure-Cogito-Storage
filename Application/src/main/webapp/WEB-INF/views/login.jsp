@@ -50,7 +50,7 @@
 				</dl>
 			</div>
 			<div class="col-md-4">
-				<h1 class="text-center" id="loginTitle">Sign In</h1>
+				<h1 class="text-center" ><strong>Sign In</strong></h1>
 				<form method="post" action="/login" role="form">
 					<fieldset>
 						<div class="form-group">
@@ -64,19 +64,23 @@
 							</div>
 						</div>
 					</fieldset>
-					<button type="submit" class="btn btn-primary">Login</button>
-					<a href="sign_up"><button type="submit" class="btn btn-primary">Sign
-							up</button></a>
+					<button type="submit" id="buttonLogin"
+						class="btn btn-primary btn-lg btn-block">Login</button>
+					<a href="sign_up">
+						<button type="submit" id="buttonLogin"
+							class="btn btn-primary btn-lg btn-block">Sign up</button>
+					</a>
 				</form>
 			</div>
 		</div>
+		<br>
 		<div class="row">
 			<div class="col-md-4">
-				<img id="logoImageLogin" src="img/logo_standard.png" class="rounded-circle" />
+				<img id="imageFooter" src="img/logo_standard.png"
+					class="rounded-circle" />
 			</div>
+			<div class="col-md-4"></div>
 			<div class="col-md-4">
-				<br>
-				<br>
 				<dl>
 					<dt>Professore:</dt>
 					<dd>Vittorio Scarano</dd>
@@ -85,7 +89,6 @@
 					<dd>Giuseppe Di Palma</dd>
 				</dl>
 			</div>
-			<div class="col-md-4"></div>
 		</div>
 	</div>
 </body>

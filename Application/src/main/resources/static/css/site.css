@@ -148,6 +148,15 @@ html, body {
   margin-right: auto;
   width: 50%;
 }
+#buttonLogin{
+	margin: 5px;
+}
+#imageFooter{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 30%;
+}
 
 #h1_title_login {
   position: relative;
