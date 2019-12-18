@@ -14,12 +14,7 @@
       <meta charset="ISO-8859-1">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Sign Up Page</title>
-      <meta name="description"
-         content="Source code generated using layoutit.com">
-      <meta name="author" content="LayoutIt!">
-      <link href="css/bootstrap.min.css" rel="stylesheet">
-      <link href="css/style.css" rel="stylesheet">
+      <title>Sign Up</title>
    </head>
    <body>
       <div class="container-fluid">
@@ -41,11 +36,11 @@
                      <label for="exampleInputEmail1"> Email address* </label> 
                      <input type="email" class="form-control" id="exampleInputEmail1" name="mailAddress">
                      <div>
-                        <label for="exampleInputPassword"> Password* </label> 
+                        <label for="exampleInputPassword"> Password*</label> 
                         <input type="password" placeholder="Password" id="password" class="form-control" name="passwd" required>
                      </div>
                      <div>
-                        <label for="exampleInputPassword"> Confirm Password* </label> 
+                        <label for="exampleInputPassword"> Confirm Password*</label> 
                         <input
                            type="password" placeholder="Confirm Password"
                            id="confirm_password" class="form-control" required>
@@ -54,11 +49,12 @@
                </fieldset>
                <button type="submit" class="btn btn-primary">Sign up</button>
             </form>
+            
             </div>
             <script src="js/check_password.js"></script>
+            <script src="css/site.css"></script>
             <div class="col-md-2"></div>
          </div>
       </div>
    </body>
 </html>
-

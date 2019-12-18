@@ -27,10 +27,7 @@ public class LoginController {
 	public String index() {
 		return "login";
 	}
-//	@GetMapping("/sign_up")
-//	public String sign_up_Page() {
-//		return "sign_up";
-//	}
+	
 	@PostMapping("/login")
 	public String login(
 				@RequestParam(name = "mailAddress",required = true) String mailAddress,
@@ -45,12 +42,9 @@ public class LoginController {
 				if( password_ins.equals(rs.getString(2))) {
 					account.setEmail(mailAddress);
 					account.setId(rs.getInt(1));
-					System.out.println("Password inserita: "+ password_ins + " \n " + " Password in database: "+ rs.getString(1));
-					System.out.println("Password corretta");
-					return "account"; //ovvero la view dove stanno i file dell'utente
-				}
+					return "redirect:/account";				}
 				else {
-					System.out.println("Password errata o non sei registrato");
+					System.out.println("Password errata o utente non registrato");
 					return "sign_up";
 				}
 				
@@ -59,30 +53,6 @@ public class LoginController {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		
 		return "";
-//		if(name.equals("luigi") && password.equals("root")) {
-//			//Database.EseguiQuery(query);
-//			account.setNome(name);
-//			model.addAttribute("account", account);
-//			return "account";
-//		}
-//		else {
-//			return "index";
-//		}
-		
 	}
-	
-
-	
-	
-//	@GetMapping("/account")
-//	public String checkAccount(Model model) {
-//		if(!model.containsAttribute("account"))
-//			return "index";
-//		return "account";
-//		
-//	}
-
 }

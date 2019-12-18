@@ -24,6 +24,7 @@ public class AccountController {
 	
 	@GetMapping("/account")
 	public String getUri(Model model,HttpServletRequest request,@RequestParam(required = false, name = "dir",defaultValue = "") String path) throws IOException {
+		System.out.println("\n\nController account\n\n");
 		HttpSession session = request.getSession();
 		List<BlobItemKeyStruct> blobs=storageBeanController.retrieve(path);
 		session.setAttribute("Files", blobs);

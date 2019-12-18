@@ -220,7 +220,6 @@ public class StorageConnectorBean {
 			blobClient.setMetadata(metadata);
 	}
 	
-	
 	public boolean createDir(String nameDir,String path) {
 		try{
 			uploadFile(UploadUtils.blankFile,path+nameDir+'/');
