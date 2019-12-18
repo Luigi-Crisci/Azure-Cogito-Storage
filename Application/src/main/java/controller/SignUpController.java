@@ -33,7 +33,7 @@ public class SignUpController {
 			String query = "INSERT INTO utente (email, first_name, last_name, password) VALUES ('" + mailAddress + "', '"
 					+ firstName + "', '" + lastName + "', '" + passwd + "');";
 			Database.EseguiQuery(query);
-			return "index";
+			return "login";
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
