@@ -8,11 +8,8 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import javax.servlet.http.Part;
 
@@ -25,6 +22,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
+import com.azure.core.exception.AzureException;
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.blob.BlobClient;
@@ -47,11 +45,8 @@ import com.microsoft.azure.management.storage.StorageAccount;
 
 import entity.Account;
 import entity.BlobItemKeyStruct;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okio.BufferedSink;
+import exeption.AlreadyExistingException;
+import exeption.BlobNotFoundExeption;
 import utility.UploadUtils;
 
 @Service
@@ -64,7 +59,7 @@ public class StorageService {
 	private Logger logger;
 	@Autowired
 	private CognitiveUploadService cognitiveUploadService;
-//	@Autowired
+	@Autowired
 	private Account account;
 
 	private Azure azure;
@@ -87,8 +82,6 @@ public class StorageService {
 	public StorageService(Environment tmpEnv,Account account) throws IOException {
 		env=tmpEnv;
 		
-		account= new Account();
-		account.setId(20);
 		
 		//Get JSON Authentication file
 		Resource resource = new ClassPathResource("appconfig.json");
@@ -117,9 +110,8 @@ public class StorageService {
 	 * @return each blob with a sas link key associated
 	 */
 	public List<BlobItemKeyStruct> retrieve(String path){
-		//Generate a new key only if is not expired
-		if(key!=null) key.setSignedExpiry(OffsetDateTime.now().plusHours(1));
-		else key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
+		//Generate a new key 
+		key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
 		
 		//Generate String for each blob
 		ListBlobsOptions options= new ListBlobsOptions();
@@ -221,9 +213,7 @@ public class StorageService {
 		blobOutputStream.close();
 		fileStream.close();
 		
-		//Setting file metadata
-		if(key!=null) key.setSignedExpiry(OffsetDateTime.now().plusHours(1));
-		else key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
+		key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
 		
 		HashMap<String,String> metadata=cognitiveUploadService.getMetadata(file,createAccessLink(blobClient.getBlobName(), key)); //Set medatada for blob
 		if(metadata!=null) 
@@ -245,7 +235,7 @@ public class StorageService {
 	 * @return the blobs list
 	 */
 	public List<BlobItemKeyStruct> search(String query){
-		List<BlobItemKeyStruct> blobs = retrieve("");
+		List<BlobItemKeyStruct> blobs = retrieve(""); //Retrieve all blobs
 		for(BlobItemKeyStruct blob: blobs) {
 			Map<String,String> metadata=blob.getItem().getMetadata();
 			
@@ -275,6 +265,27 @@ public class StorageService {
 				logger.info("Unable to delete blob");
 				return false;
 			}
+	}
+	
+	/**
+	 * Rename a file
+	 * @param blobName
+	 * @param newFilename
+	 * @param overwrite
+	 * @return
+	 * @throws BlobNotFoundExeption
+	 * @throws AlreadyExistingException
+	 */
+	public void rename(String blobName,String newFilename,boolean overwrite) throws BlobNotFoundExeption, AlreadyExistingException, IllegalArgumentException {
+		BlobClient oldBlobClient=blobContainerClient.getBlobClient(blobName);
+		if(!oldBlobClient.exists())
+			throw new BlobNotFoundExeption(String.format("Blob %s not found", blobName));
+		BlobClient newBlobClient=blobContainerClient.getBlobClient(newFilename);
+		if(!overwrite && newBlobClient.exists())
+			throw new AlreadyExistingException(String.format("Blob %s already existing! Set overwrite to write on it", newFilename));
+		
+		newBlobClient.copyFromUrl(oldBlobClient.getBlobUrl());
+		oldBlobClient.delete();
 	}
 
 

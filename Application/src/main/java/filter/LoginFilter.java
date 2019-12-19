@@ -21,8 +21,8 @@ import com.azure.core.http.HttpResponse;
 import entity.Account;
 import entity.BoringLog;
 
-//@Component
-//@Order(1)
+@Component
+@Order(1)
 public class LoginFilter implements Filter{
 
 	@Autowired

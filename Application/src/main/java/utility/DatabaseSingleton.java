@@ -10,10 +10,6 @@ import java.sql.Statement;
 public class DatabaseSingleton 
 {
 	private static DatabaseSingleton instance;
-//	private static String db_url;
-//	private static String db_user;
-//	private static String db_password;
-//	private static String driver;
 	private Connection connection;
 	private Statement statement;
 	public Statement getStatement() {return statement;}
