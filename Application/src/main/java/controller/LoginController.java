@@ -1,4 +1,4 @@
-package myapp;
+package controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,15 +13,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import myapp.Account;
+import entity.Account;
+import utility.DatabaseSingleton;
 
 @Controller
 public class LoginController {
 	
 	@Autowired
 	private Account account;
-	
-	
 	
 	@GetMapping("/")
 	public String index() {

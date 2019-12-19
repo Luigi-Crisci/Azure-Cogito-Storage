@@ -1,4 +1,4 @@
-package myapp;
+package entity;
 
 import com.azure.storage.blob.models.BlobItem;
 

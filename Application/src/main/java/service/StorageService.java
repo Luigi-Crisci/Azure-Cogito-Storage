@@ -1,4 +1,4 @@
-package myapp;
+package service;
 
 import java.util.List;
 import java.io.File;
@@ -44,25 +44,27 @@ import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.appservice.FunctionApp;
 import com.microsoft.azure.management.resources.fluentcore.arm.Region;
 import com.microsoft.azure.management.storage.StorageAccount;
+
+import entity.Account;
+import entity.BlobItemKeyStruct;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
+import utility.UploadUtils;
 
 @Service
 @SessionScope
-public class StorageConnectorBean {
+public class StorageService {
 
-	private static OkHttpClient httpClient;
-	private static Pattern pattern;
 	@Autowired
 	private Environment env;
 	@Autowired
 	private Logger logger;
 	@Autowired
 	private CognitiveUploadService cognitiveUploadService;
-	@Autowired
+//	@Autowired
 	private Account account;
 
 	private Azure azure;
@@ -76,9 +78,17 @@ public class StorageConnectorBean {
 	final String storageAccountName;
 	final String containerName;
 	
+	/**
+	 * Initialize Azure's user resources
+	 * @param tmpEnv Application environment
+	 * @throws IOException Only on local, if the appconfig.json is not present in classpath
+	 */
 	@Autowired
-	public StorageConnectorBean(Environment tmpEnv) throws IOException {
+	public StorageService(Environment tmpEnv,Account account) throws IOException {
 		env=tmpEnv;
+		
+		account= new Account();
+		account.setId(20);
 		
 		//Get JSON Authentication file
 		Resource resource = new ClassPathResource("appconfig.json");
@@ -112,7 +122,6 @@ public class StorageConnectorBean {
 		else key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
 		
 		//Generate String for each blob
-		//HashMap<BlobItem,String> mappedBlobs= new HashMap<BlobItem, String>();
 		ListBlobsOptions options= new ListBlobsOptions();
 		BlobListDetails detail= new BlobListDetails();
 		detail.setRetrieveMetadata(true);
@@ -170,7 +179,9 @@ public class StorageConnectorBean {
 		return String.format("https://%s.blob.core.windows.net/default/%s?%s", storageAccount.name(),blobName,param.encode());
 	}
 	
+	
 	/**
+	 *TODO: THIS SHOULD NOT BE HERE MAN
 	 * Register a new storage account for a new user
 	 * @return creation success or failure
 	 */
@@ -196,7 +207,6 @@ public class StorageConnectorBean {
 	 * @throws IOException
 	 */
 	public void uploadFile(Part file,String path) throws IOException{
-		BlobItem blob = new BlobItem();
 		BlobClient blobClient=blobContainerClient.getBlobClient(path+file.getSubmittedFileName());
 		BlobOutputStream blobOutputStream=blobClient.getBlockBlobClient().getBlobOutputStream();
 		InputStream fileStream = file.getInputStream();
@@ -248,6 +258,23 @@ public class StorageConnectorBean {
 					blobs.remove(blob);
 		}
 		return blobs;
+	}
+
+	/**
+	 * Delete a blob
+	 * @param fileName blob file name
+	 * @return if has been deleted
+	 */
+	public boolean delete(String fileName) {
+		try {
+			logger.info("Deleting blob : " + fileName);
+			blobContainerClient.getBlobClient(fileName).delete(); //delete the requested Blob
+			logger.info("Delete completed");
+			return true;
+		}catch(Exception e) {
+				logger.info("Unable to delete blob");
+				return false;
+			}
 	}
 
 

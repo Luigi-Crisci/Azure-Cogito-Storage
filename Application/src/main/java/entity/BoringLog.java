@@ -1,4 +1,4 @@
-package myapp;
+package entity;
 
 import java.util.UUID;
 

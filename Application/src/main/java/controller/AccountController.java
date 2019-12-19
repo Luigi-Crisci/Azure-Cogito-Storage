@@ -1,4 +1,4 @@
-package myapp;
+package controller;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.azure.storage.blob.models.BlobItem;
 
+import entity.BlobItemKeyStruct;
+import service.StorageService;
+
 @Controller
 public class AccountController {
 
 	@Autowired
-	private StorageConnectorBean storageBeanController;
-	private static String rootDirectory="/";
+	private StorageService storageBeanController;
 	
 	@GetMapping("/account")
 	public String getUri(Model model,HttpServletRequest request,@RequestParam(required = false, name = "dir",defaultValue = "") String path) throws IOException {
