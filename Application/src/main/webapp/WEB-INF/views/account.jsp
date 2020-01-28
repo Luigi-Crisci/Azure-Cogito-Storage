@@ -69,9 +69,12 @@
 							<span class="ellipsis" id="indentTags"><%=tag%></span>
 							</td>
 							<% } 
-							}catch(Exception e){
-								
-							}%>
+							}catch(Exception e){ %>
+								<td style="width: 30%">
+								<span class="ellipsis" id="indentTags">No tags!</span>
+								</td>
+							
+							<% }%>
 							 <td style="width: 20%"> 
 							<a href="test"> <img id="deleteFile" src="img/trash.svg" alt="delete"/> </a> 
 							<a href="test"> <img id="renameFile" src="img/renameFile.png" alt="rename"/> </a>

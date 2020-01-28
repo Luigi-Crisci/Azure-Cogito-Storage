@@ -1,7 +1,6 @@
 package service;
 
 import java.util.List;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
@@ -12,19 +11,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.Part;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
-
-import com.azure.core.exception.AzureException;
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.blob.BlobClient;
@@ -42,10 +34,6 @@ import com.azure.storage.blob.specialized.BlobOutputStream;
 import com.azure.storage.common.sas.SasProtocol;
 import com.google.common.base.Stopwatch;
 import com.microsoft.azure.management.Azure;
-import com.microsoft.azure.management.appservice.FunctionApp;
-import com.microsoft.azure.management.resources.fluentcore.arm.Region;
-import com.microsoft.azure.management.storage.StorageAccount;
-
 import entity.Account;
 import entity.BlobItemKeyStruct;
 import exeption.AlreadyExistingException;
@@ -82,7 +70,6 @@ public class StorageService {
 	@Autowired
 	public StorageService(Environment tmpEnv,Account account,Azure azure) throws IOException {
 		Stopwatch stopwatch = Stopwatch.createStarted(); //Needed to count method time call
-		env=tmpEnv;
 		
 		//Because of local testing. This will be replaced from injected Account from login
 		account=new Account();
@@ -261,8 +248,8 @@ public class StorageService {
 		return blobs.stream().filter(blob->{
 			Map<String,String> metadata=blob.getItem().getMetadata();
 			//Get metadata, null if no tags are found
-			List<String> tags=(metadata!=null && metadata.containsKey("tags")) ? 
-								Arrays.asList(metadata.get("tags").split(",")) :
+			List<String> tags=(metadata!=null && metadata.containsKey("Tags")) ? 
+								Arrays.asList(metadata.get("Tags").split(",")) :
 								null;
 			return (blob.getTrueName().contains(query)) || (tags!=null && tags.contains(query));
 			}).collect(Collectors.toList());	
