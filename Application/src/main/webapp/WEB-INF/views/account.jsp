@@ -22,22 +22,29 @@
 <title>Account</title>
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/site.css" rel="stylesheet">
+
+
+<script type="text/javascript" src="js/functions.js"></script>
+
 </head>
 <body>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-12">
 				<h3>Il tuo account</h3>
-				<span class="badge badge-default">Label</span>
+				
+				 <button onclick="isDirectory()">Try it</button> 
+				
+				<h5 id="message">Label</h5>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-8">
-				<table class="table">
-					<thead>
+				<table  class="table table-hover">
+					<thead class="thead-dark">
 						<tr>
 							<th>Name</th>
-							<th>Action</th>
+							<th class="text-center">Action</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -46,21 +53,30 @@
 							for (BlobItemKeyStruct b : blobs) {
 								String key = b.getKey();
 						%>
-						<tr>
+						<tr id="tableDataUser">
 							<td><a href="<%=key%>"><%=b.getTrueName()%></a></td>
+							 <td align="center"> 
+							<a href="test"> <img id="deleteFile" src="img/trash.svg" alt="delete"/> </a> 
+							<a href="test"> <img id="renameFile" src="img/renameFile.png" alt="rename"/> </a>
+							<a href="test"> <img id="changeDirectory" src="img/changeDirectory.svg" alt="changeDir"/> </a>
+							</td>
 						</tr>
 						<%
 							}
 						%>
+						
 					</tbody>
 				</table>
 			</div>
 			<div class="col-md-4">
-
+			<a href="/">
+					<button type="submit" id="buttonLogOut"
+						class="btn btn-danger btn-lg btn-block">Logout</button>
+			</a>
 				<div class="form-group">
 					<form role="form" method="post" action="/account/search">
 						<label for="InputSearch">Search:</label> <input type="text"
-							class="form-control" name="query" />
+							class="form-control" name="query"/>
 					</form>
 				</div>
 <!--  			

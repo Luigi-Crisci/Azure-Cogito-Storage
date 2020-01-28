@@ -163,3 +163,8 @@ html, body {
   top: 18px;
   left: 10px;
 }
+
+#deleteFile, #renameFile, #changeDirectory {
+	width: 5%;
+	height: 5%;
+}
