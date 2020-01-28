@@ -15,6 +15,7 @@ $(document).ready(function () {
     	event.preventDefault();
     	create_dir_ajax(currentDir);
     });
+    
 
 });
 
@@ -89,3 +90,5 @@ function fire_ajax_submit(currentDir) {
     });
 
 }
+
+

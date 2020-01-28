@@ -22,21 +22,31 @@
 <title>Account</title>
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/site.css" rel="stylesheet">
+
+
+<script type="text/javascript" src="js/functions.js"></script>
+
 </head>
 <body>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-12">
 				<h3>Il tuo account</h3>
-				<span class="badge badge-default">Label</span>
+				
+				 <button onclick="isDirectory()">Try it</button> 
+				
+				<h5 id="message">da eliminare</h5>
+				
+				
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-8">
-				<table class="table">
-					<thead>
+				<table  class="table table-hover">
+					<thead class="thead-dark">
 						<tr>
 							<th>Name</th>
+							<th>Tag</th>
 							<th>Action</th>
 						</tr>
 					</thead>
@@ -45,23 +55,50 @@
 							final List<BlobItemKeyStruct> blobs = (List<BlobItemKeyStruct>) session.getAttribute("Files");
 							for (BlobItemKeyStruct b : blobs) {
 								String key = b.getKey();
+					
 						%>
-						<tr>
-							<td><a href="<%=key%>"><%=b.getTrueName()%></a></td>
+						<tr id="tableDataUser">
+						
+							<td style="width: 50%"><a href="<%=key%>"><label><%=b.getTrueName()%></label></a></td>
+							
+							<%
+							try{	
+								String tag = b.getItem().getMetadata().get("Tags").replaceAll("(?!\\s)\\W", "$0 ");
+								if(tag!=null){ %>
+							<td style="width: 30%">
+							<span class="ellipsis" id="indentTags"><%=tag%></span>
+							</td>
+							<% } 
+							}catch(Exception e){
+								
+							}%>
+							 <td style="width: 20%"> 
+							<a href="test"> <img id="deleteFile" src="img/trash.svg" alt="delete"/> </a> 
+							<a href="test"> <img id="renameFile" src="img/renameFile.png" alt="rename"/> </a>
+							<a href="test"> <img id="changeDirectory" src="img/changeDirectory.svg" alt="changeDir"/> </a>
+							</td>
 						</tr>
 						<%
 							}
 						%>
+						
 					</tbody>
 				</table>
 			</div>
 			<div class="col-md-4">
-
+			<a href="/">
+					<button type="submit" id="buttonLogOut"
+						class="btn btn-danger btn-lg btn-block">Logout</button>
+			</a>
+			
 				<div class="form-group">
 					<form role="form" method="post" action="/account/search">
 						<label for="InputSearch">Search:</label> <input type="text"
-							class="form-control" name="query" />
+							class="form-control" name="query"/>
+							
+							<a href="test"> <img id="accountHome" src="img/homeAccountButton.svg" alt="accountHome"/> </a>
 					</form>
+
 				</div>
 <!--  			
 <div>

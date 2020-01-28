@@ -22,7 +22,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="page-header">
-					<a href="login"> <img id="logoImageLogin"
+					<a href="/"> <img id="logoImageLogin"
 						src="img/Logo-Microsoft-Azure.png" alt="logo" />
 					</a>
 					<!--  
