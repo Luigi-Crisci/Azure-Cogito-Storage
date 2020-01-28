@@ -287,6 +287,4 @@ public class StorageService {
 		newBlobClient.copyFromUrl(oldBlobClient.getBlobUrl());
 		oldBlobClient.delete();
 	}
-
-
 }
