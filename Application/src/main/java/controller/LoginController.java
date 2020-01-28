@@ -41,7 +41,10 @@ public class LoginController {
 				if( password_ins.equals(rs.getString(2))) {
 					account.setEmail(mailAddress);
 					account.setId(rs.getInt(1));
-					return "redirect:/account";				}
+				
+					
+					return "redirect:/account";				
+				}
 				else {
 					System.out.println("Password errata o utente non registrato");
 					return "sign_up";

@@ -19,7 +19,7 @@ public class SearchController {
 	@PostMapping("/account/search")
 	public String search(@RequestParam(name = "query", required = true, defaultValue = "") String query,HttpServletRequest request ) {
 		HttpSession session = request.getSession();
-		session.setAttribute("results", storageService.search(query));
-		return "result";
+		session.setAttribute("Files", storageService.search(query));
+		return "account";
 	}
 }

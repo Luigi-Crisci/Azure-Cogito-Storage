@@ -27,7 +27,7 @@ public class Application extends SpringBootServletInitializer{
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(Application.class);
     }
-
+    
     @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return args -> {
@@ -42,6 +42,8 @@ public class Application extends SpringBootServletInitializer{
             
         };
     }
+    
+    
     
     /**
     @Bean

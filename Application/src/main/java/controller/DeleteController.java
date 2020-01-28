@@ -19,9 +19,9 @@ public class DeleteController {
 	public ResponseEntity<?> delete(@RequestParam(required = true, name = "file") String fileName){
 		try {
 			storageController.delete(fileName);
-			return new ResponseEntity(String.format("Deleted blob %s successfully!", fileName),HttpStatus.OK);
+			return new ResponseEntity<>(String.format("Deleted blob %s successfully!", fileName),HttpStatus.OK);
 		}catch(Exception e) {
-			return new ResponseEntity(String.format("Unable to delete blob %s",fileName),HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(String.format("Unable to delete blob %s",fileName),HttpStatus.BAD_REQUEST);
 		}
 		
 	}
