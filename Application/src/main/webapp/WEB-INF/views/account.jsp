@@ -76,9 +76,10 @@
 							
 							<% }%>
 							 <td style="width: 20%"> 
-							<a href="test"> <img id="deleteFile" src="img/trash.svg" alt="delete"/> </a> 
-							<a href="test"> <img id="renameFile" src="img/renameFile.png" alt="rename"/> </a>
-							<a href="test"> <img id="changeDirectory" src="img/changeDirectory.svg" alt="changeDir"/> </a>
+							<a href="delete"> <img id="deleteFile" src="img/trash.svg" alt="delete"/> </a> 
+							<!-- Not so easy -->
+							<a href="rename"> <img id="renameFile" src="img/renameFile.png" alt="rename"/> </a>
+							<a href="changeDir"> <img id="changeDirectory" src="img/changeDirectory.svg" alt="changeDir"/> </a>
 							</td>
 						</tr>
 						<%
@@ -89,7 +90,7 @@
 				</table>
 			</div>
 			<div class="col-md-4">
-			<a href="/">
+			<a href="/logout">
 					<button type="submit" id="buttonLogOut"
 						class="btn btn-danger btn-lg btn-block">Logout</button>
 			</a>

@@ -70,12 +70,7 @@ public class StorageService {
 	@Autowired
 	public StorageService(Environment tmpEnv,Account account,Azure azure) throws IOException {
 		Stopwatch stopwatch = Stopwatch.createStarted(); //Needed to count method time call
-		
-		//Because of local testing. This will be replaced from injected Account from login
-		account=new Account();
-		account.setId(3);
 
-		
 		storageAccountName = tmpEnv.getProperty("azure.account-name")+account.getId();
 		containerName = tmpEnv.getProperty("azure.default-container");
 		
@@ -143,7 +138,7 @@ public class StorageService {
 		//Omega tarantella
 		String regexPath=path.replaceAll("\\/", "\\/");
 		blobs.stream()
-		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w.%-]*", e.getName()) && !e.getName().contains(".blank"))
+		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w.\\s%-]*", e.getName()) && !e.getName().contains(".blank"))
 		.forEach(e->{
 			final String name = e.getName();
 			String trueName= name.contains("/") ? name.substring(name.lastIndexOf('/')+1) : name;
