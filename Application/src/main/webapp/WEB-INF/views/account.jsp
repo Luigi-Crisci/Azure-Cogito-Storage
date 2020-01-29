@@ -152,7 +152,7 @@
 						<label for="InputSearch">New directory name:</label> <input
 							type="text" name="dirName" class="form-control"> <input
 							type="submit" class="form-control" value="Create"
-							id="createDirSubmit" />
+							id="createDirSubmit" onClick="window.location.reload();" />
 					</form>
 
 
@@ -168,7 +168,7 @@
 						id="fileUploadForm">
 						<label for="InputSearch">Choose files to upload:</label> <input
 							type="file" name="files" class="form-control"> <input
-							type="submit" class="form-control" value="Upload" id="btnSubmit" />
+							type="submit" class="form-control" value="Upload" id="btnSubmit" onClick="window.location.reload();" />
 					</form>
 
 
@@ -181,6 +181,13 @@
 				</form>
 -->
 				<h1>Ajax Post Result</h1>
+								<dl>
+					<dt>Numero oggetti totali:  <%=countTotal%></dt>
+					<dt>Numero directory totali:  <%=countDir%></dt>
+					<dt>Numero immagini totali:  <%=countImg%></dt>
+					<dt>Numero file totali:  <%=countOther%></dt>
+
+				</dl>
 				<pre>
     <label id="result"></label>
 						</div>
