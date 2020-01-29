@@ -1,7 +1,6 @@
 package service;
 
 import java.util.List;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
@@ -9,20 +8,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-
+import java.util.stream.Collectors;
 import javax.servlet.http.Part;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
-
-import com.azure.core.exception.AzureException;
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.blob.BlobClient;
@@ -38,11 +32,8 @@ import com.azure.storage.blob.sas.BlobServiceSasQueryParameters;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.BlobOutputStream;
 import com.azure.storage.common.sas.SasProtocol;
+import com.google.common.base.Stopwatch;
 import com.microsoft.azure.management.Azure;
-import com.microsoft.azure.management.appservice.FunctionApp;
-import com.microsoft.azure.management.resources.fluentcore.arm.Region;
-import com.microsoft.azure.management.storage.StorageAccount;
-
 import entity.Account;
 import entity.BlobItemKeyStruct;
 import exeption.AlreadyExistingException;
@@ -61,17 +52,15 @@ public class StorageService {
 	private CognitiveUploadService cognitiveUploadService;
 	@Autowired
 	private Account account;
-
+	@Autowired
 	private Azure azure;
-	private File devCredential;
-	private StorageAccount storageAccount;
-	@Value("${azure.subid}")
-	private String subId;
+//	@Value("${azure.subid}")
+//	private String subId;
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient blobContainerClient;
 	private UserDelegationKey key;
-	final String storageAccountName;
-	final String containerName;
+	private final String storageAccountName;
+	private final String containerName;
 	
 	/**
 	 * Initialize Azure's user resources
@@ -79,29 +68,56 @@ public class StorageService {
 	 * @throws IOException Only on local, if the appconfig.json is not present in classpath
 	 */
 	@Autowired
-	public StorageService(Environment tmpEnv,Account account) throws IOException {
-		env=tmpEnv;
+	public StorageService(Environment tmpEnv,Account account,Azure azure) throws IOException {
+		Stopwatch stopwatch = Stopwatch.createStarted(); //Needed to count method time call
 		
-		
-		//Get JSON Authentication file
-		Resource resource = new ClassPathResource("appconfig.json");
-		devCredential = new File(resource.getURI());
-		
-		azure= Azure.authenticate(devCredential).withSubscription(env.getProperty("azure.subid"));  //Only on local
+		//Because of local testing. This will be replaced from injected Account from login
+		account=new Account();
+		account.setId(3);
 
-		storageAccountName = env.getProperty("azure.account-name")+account.getId();
-		containerName = env.getProperty("azure.default-container");
 		
-		storageAccount = azure.storageAccounts().getByResourceGroup(env.getProperty("azure.resource-group"),storageAccountName);
-		if(storageAccount==null) registerAccount();
+		storageAccountName = tmpEnv.getProperty("azure.account-name")+account.getId();
+		containerName = tmpEnv.getProperty("azure.default-container");
+		
+		//TODO: I don't know if I'll need it
+//		storageAccount = azure.storageAccounts().getByResourceGroup(tmpEnv.getProperty("azure.resource-group"),storageAccountName);
+
+		//Get a reference to a BlobServiceClientBuilder
 		blobServiceClient = new BlobServiceClientBuilder().credential(new DefaultAzureCredentialBuilder().build())
-				.endpoint(storageAccount.endPoints().primary().blob()).buildClient(); 
+				.endpoint(String.format("https://%s.blob.core.windows.net/", storageAccountName)).buildClient();
 		
 		//Get reference to Container
 		blobContainerClient=blobServiceClient.getBlobContainerClient(containerName);
 		if(!blobContainerClient.exists())
 			blobContainerClient=blobServiceClient.createBlobContainer(containerName);
-
+		
+		System.out.println("EXT: Blob clients get completed in: " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
+		stopwatch.stop();
+	}
+	
+	/**
+	 * Retrieve all blobs for the current user
+	 * @return the blobs
+	 */
+	public List<BlobItemKeyStruct> retrieve(){
+		key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
+		//Generate String for each blob
+		ListBlobsOptions options= new ListBlobsOptions();
+		BlobListDetails detail= new BlobListDetails();
+		detail.setRetrieveMetadata(true);
+		options.setDetails(detail);
+		
+		PagedIterable<BlobItem> blobs=blobContainerClient.listBlobs(options,null);
+		List<BlobItemKeyStruct> blobsList= new ArrayList<BlobItemKeyStruct>();
+		
+		blobs.stream()
+			.forEach(e->{
+				final String blobName = e.getName();
+				String trueName= blobName.contains("/") ? blobName.substring(blobName.lastIndexOf('/')) : blobName;
+				blobsList.add(new BlobItemKeyStruct(e, createAccessLink(blobName, key), false, trueName));
+			});
+		
+		return blobsList;
 	}
 	
 	/**
@@ -110,6 +126,8 @@ public class StorageService {
 	 * @return each blob with a sas link key associated
 	 */
 	public List<BlobItemKeyStruct> retrieve(String path){
+		Stopwatch stopwatch = Stopwatch.createStarted();
+		
 		//Generate a new key 
 		key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
 		
@@ -125,7 +143,7 @@ public class StorageService {
 		//Omega tarantella
 		String regexPath=path.replaceAll("\\/", "\\/");
 		blobs.stream()
-		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w.%-]*", e.getName()))
+		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w.%-]*", e.getName()) && !e.getName().contains(".blank"))
 		.forEach(e->{
 			final String name = e.getName();
 			String trueName= name.contains("/") ? name.substring(name.lastIndexOf('/')+1) : name;
@@ -146,11 +164,15 @@ public class StorageService {
 				.forEach(e->blobsList.
 						add(new BlobItemKeyStruct(null, String.format("/account?dir=%s%s", path,e), true,e)));
 		
+		//Print all blobs, just to log them in the console
 		for(BlobItemKeyStruct x : blobsList) {
 			System.out.println(x.toString());
 		}
 		
+		//Sort blobs
 		blobsList.sort((a,b)-> a.getTrueName().compareTo(b.getTrueName())); //Sort item
+		
+		System.out.println("EXT: Retrieve blobs completed in: " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
 		return blobsList;
 	}
 	
@@ -168,31 +190,11 @@ public class StorageService {
 				.setPermissions(blobPermission);
 		
 		BlobServiceSasQueryParameters param = builder.generateSasQueryParameters(key,storageAccountName);
-		return String.format("https://%s.blob.core.windows.net/default/%s?%s", storageAccount.name(),blobName,param.encode());
+		return String.format("https://%s.blob.core.windows.net/default/%s?%s", storageAccountName,blobName,param.encode());
 	}
-	
-	
-	/**
-	 *TODO: THIS SHOULD NOT BE HERE MAN
-	 * Register a new storage account for a new user
-	 * @return creation success or failure
-	 */
-	public boolean registerAccount() {
-		try{
-			//Register a new Storage Account for an account
-			storageAccount = azure.storageAccounts().define(storageAccountName)
-							.withRegion(Region.EUROPE_WEST)
-							.withExistingResourceGroup(env.getProperty("azure.resource-group"))
-							.withOnlyHttpsTraffic()
-							.withSystemAssignedManagedServiceIdentity()
-							.create();
-			
-		return true;
-		}catch(Exception e) {
-			return false;
-		}
-	}
-	
+
+
+
 	/**
 	 * Upload file to user account. If a path is specified, it will create the directory tree too
 	 * @param file
@@ -220,6 +222,12 @@ public class StorageService {
 			blobClient.setMetadata(metadata);
 	}
 	
+	/**
+	 * Create a Directory: it creates a blank file named .blank into "path"
+	 * @param nameDir Directory name
+	 * @param path Where to save it
+	 * @return if has been created
+	 */
 	public boolean createDir(String nameDir,String path) {
 		try{
 			uploadFile(UploadUtils.blankFile,path+nameDir+'/');
@@ -235,19 +243,16 @@ public class StorageService {
 	 * @return the blobs list
 	 */
 	public List<BlobItemKeyStruct> search(String query){
-		List<BlobItemKeyStruct> blobs = retrieve(""); //Retrieve all blobs
-		for(BlobItemKeyStruct blob: blobs) {
+		List<BlobItemKeyStruct> blobs = retrieve();
+		
+		return blobs.stream().filter(blob->{
 			Map<String,String> metadata=blob.getItem().getMetadata();
-			
 			//Get metadata, null if no tags are found
-			List<String> tags=metadata.containsKey("tags") ? 
-								Arrays.asList(metadata.get("tags").split(",")) :
+			List<String> tags=(metadata!=null && metadata.containsKey("Tags")) ? 
+								Arrays.asList(metadata.get("Tags").split(",")) :
 								null;
-								
-			if(!(blob.getTrueName().contains(query) || (tags!=null && tags.contains(query))))
-					blobs.remove(blob);
-		}
-		return blobs;
+			return (blob.getTrueName().contains(query)) || (tags!=null && tags.contains(query));
+			}).collect(Collectors.toList());	
 	}
 
 	/**
@@ -286,5 +291,7 @@ public class StorageService {
 		
 		newBlobClient.copyFromUrl(oldBlobClient.getBlobUrl());
 		oldBlobClient.delete();
-	}
+	} 
+
+
 }

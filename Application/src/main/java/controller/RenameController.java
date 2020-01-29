@@ -1,5 +1,7 @@
 package controller;
 
+import javax.validation.constraints.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +20,10 @@ public class RenameController {
 	
 	@PostMapping("/account/rename")
 	public ResponseEntity<?> rename(@RequestParam(name = "oldFilename", required = true) String oldFilename, 
-			@RequestParam(name = "newFilename", required = true) String newFilename, 
+			@RequestParam(name = "newFilename", required = true) @Pattern(regexp = "^[a-zA-Z0-9.-_]+$" ) String newFilename, 
 			@RequestParam(name = "Overwrite", required = false, defaultValue = "false") String overwrite){
 		
+			//TODO: Chissà che cos'era sta cosa
 			Boolean ow=new Boolean(false);
 			try{
 				ow=Boolean.parseBoolean(overwrite);
