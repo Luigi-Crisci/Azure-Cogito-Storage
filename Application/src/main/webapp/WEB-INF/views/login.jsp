@@ -49,7 +49,7 @@
 						condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
 				</dl>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-4" id="myborderDiv">
 				<h1 class="text-center" ><strong>Sign In</strong></h1>
 				<form method="post" action="/login" role="form">
 					<fieldset>
@@ -76,13 +76,15 @@
 			</div>
 		</div>
 		<br>
-		<div class="row">
-			<div class="col-md-4">
+		<div class="row" >
+		
+			<div class="col-md-4" id="myborderDivAlto">
 				<img id="imageFooter" src="img/logo_standard.png"
 					class="rounded-circle" />
 			</div>
-			<div class="col-md-4"></div>
+			<div class="col-md-4" id="myborderDivAlto"></div>
 			<div class="col-md-4">
+			
 				<dl>
 					<dt>Professore:</dt>
 					<dd>Vittorio Scarano</dd>

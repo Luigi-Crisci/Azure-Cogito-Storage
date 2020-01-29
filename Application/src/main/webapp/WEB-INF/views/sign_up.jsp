@@ -48,7 +48,7 @@
 						condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
 				</dl>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-4" id="myborderDiv">
 				<h1 class="text-center"><strong>Sign Up</strong></h1>
 				<form method="post" action="/registration" role="form">
 					<fieldset>
