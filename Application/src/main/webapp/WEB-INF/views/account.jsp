@@ -31,13 +31,10 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-12">
-				<h3>Il tuo account</h3>
-				
-				 <button onclick="isDirectory()">Try it</button> 
-				
-				<h5 id="message">da eliminare</h5>
-				
-				
+			<%
+			
+			%>
+				<h3>Ciao, NOME_UTENTE</h3>				
 			</div>
 		</div>
 		<div class="row">
@@ -45,6 +42,7 @@
 				<table  class="table table-hover">
 					<thead class="thead-dark">
 						<tr>
+							<th>#</th>
 							<th>Name</th>
 							<th>Tag</th>
 							<th>Action</th>
@@ -53,20 +51,53 @@
 					<tbody>
 						<%
 							final List<BlobItemKeyStruct> blobs = (List<BlobItemKeyStruct>) session.getAttribute("Files");
+							int countTotal = 0;
+							int countDir = 0;
+							int countImg = 0;
+							int countOther = 0;
 							for (BlobItemKeyStruct b : blobs) {
 								String key = b.getKey();
-					
+								countTotal++;
+								String dirLast = b.getTrueName().substring(b.getTrueName().length()-1);
+								String imgLast = b.getTrueName().substring(b.getTrueName().length()-3);
+								String jpegLast = b.getTrueName().substring(b.getTrueName().length()-4);
+								
+								
+
 						%>
 						<tr id="tableDataUser">
+							<td>
+							<%
+
+							if(dirLast.equals("/"))
+							{
+								countDir++;
+							%>
+								  <img id="directoyImageFile" src="img/directoryImg.svg" alt="dir"/>
+							<%}
+							else if(imgLast.equals("png") || imgLast.equals("jpg") || imgLast.equals("jpeg"))
+							{
+								countImg++;
+							%>
+								
+								<img id="fileImageFile" src="img/imageImg.svg" alt="imm"/>
+							<%} 
+							else
+							{
+								countOther++;
+							%>
+								<img id="fileImageFile" src="img/fileImg.svg" alt="file"/>
+							<%}%>
+							</td>
 						
-							<td style="width: 50%"><a href="<%=key%>"><label><%=b.getTrueName()%></label></a></td>
+							<td style="width: 50%" id="fileName"><a href="<%=key%>"><label><%=b.getTrueName()%></label></a></td>
 							
 							<%
 							try{	
 								String tag = b.getItem().getMetadata().get("Tags").replaceAll("(?!\\s)\\W", "$0 ");
 								if(tag!=null){ %>
 							<td style="width: 30%">
-							<span class="ellipsis" id="indentTags"><%=tag%></span>
+							<span class="ellipsis" id="indentTags" ><%=tag%></span>
 							</td>
 							<% } 
 							}catch(Exception e){ %>
@@ -82,13 +113,18 @@
 							</td>
 						</tr>
 						<%
+							
 							}
+							System.out.println("total "+countTotal);
+							System.out.println("Dir "+countDir);
+							System.out.println("Img "+countImg);
+							System.out.println("Other "+countOther);
 						%>
 						
 					</tbody>
 				</table>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-4" id="myborderDiv">
 			<a href="/">
 					<button type="submit" id="buttonLogOut"
 						class="btn btn-danger btn-lg btn-block">Logout</button>
@@ -155,10 +191,18 @@
 		</div>
 		<div class="row">
 			<div class="col-md-4">
-				<img id="imageFooter" src="img/logo_standard.png"
+				<dl>
+					<dt>Numero oggetti totali:  <%=countTotal%></dt>
+					<dt>Numero directory totali:  <%=countDir%></dt>
+					<dt>Numero immagini totali:  <%=countImg%></dt>
+					<dt>Numero file totali:  <%=countOther%></dt>
+
+				</dl>
+			</div>
+			<div class="col-md-4">
+							<img id="imageFooter" src="img/logo_standard.png"
 					class="rounded-circle" />
 			</div>
-			<div class="col-md-4"></div>
 			<div class="col-md-4">
 				<dl>
 					<dt>Professore:</dt>
