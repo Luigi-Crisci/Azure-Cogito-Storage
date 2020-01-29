@@ -76,11 +76,11 @@ public class StorageService {
 		account.setId(3);
 
 		
-		storageAccountName = env.getProperty("azure.account-name")+account.getId();
-		containerName = env.getProperty("azure.default-container");
+		storageAccountName = tmpEnv.getProperty("azure.account-name")+account.getId();
+		containerName = tmpEnv.getProperty("azure.default-container");
 		
 		//TODO: I don't know if I'll need it
-//		storageAccount = azure.storageAccounts().getByResourceGroup(env.getProperty("azure.resource-group"),storageAccountName);
+//		storageAccount = azure.storageAccounts().getByResourceGroup(tmpEnv.getProperty("azure.resource-group"),storageAccountName);
 
 		//Get a reference to a BlobServiceClientBuilder
 		blobServiceClient = new BlobServiceClientBuilder().credential(new DefaultAzureCredentialBuilder().build())
