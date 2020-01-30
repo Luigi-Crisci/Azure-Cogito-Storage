@@ -50,7 +50,9 @@
 				</dl>
 			</div>
 			<div class="col-md-4" id="myborderDiv">
-				<h1 class="text-center" ><strong>Sign In</strong></h1>
+				<h1 class="text-center">
+					<strong>Sign In</strong>
+				</h1>
 				<form method="post" action="/login" role="form">
 					<fieldset>
 						<div class="form-group">
@@ -66,25 +68,25 @@
 					</fieldset>
 					<button type="submit" id="buttonLoginx"
 						class="btn btn-success btn-lg btn-block">Login</button>
-						<br>
-					
+					<br>
+
 				</form>
 				<a href="sign_up">
-						<button type="submit" id="buttonLoginx"
-							class="btn btn-primary btn-lg btn-block">Sign up</button>
-					</a>
+					<button type="submit" id="buttonLoginx"
+						class="btn btn-primary btn-lg btn-block">Sign up</button>
+				</a>
 			</div>
 		</div>
 		<br>
-		<div class="row" >
-		
+		<div class="row">
+
 			<div class="col-md-4" id="myborderDivAlto">
 				<img id="imageFooter" src="img/logo_standard.png"
 					class="rounded-circle" />
 			</div>
 			<div class="col-md-4" id="myborderDivAlto"></div>
 			<div class="col-md-4">
-			
+
 				<dl>
 					<dt>Professore:</dt>
 					<dd>Vittorio Scarano</dd>

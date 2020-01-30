@@ -4,6 +4,9 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"
 	import="java.util.*,com.azure.storage.blob.models.*"%>
+	
+	<% String uriPath = request.getRequestURL().toString();
+	String uriPathEffettiva = uriPath.substring(0, uriPath.lastIndexOf("WEB-INF")) ; %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +24,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Account</title>
 <link href="css/bootstrap.min.css" rel="stylesheet">
-<link href="css/site.css" rel="stylesheet">
+<link href="<%=uriPathEffettiva%>css/site.css" rel="stylesheet">
 
 
 <script type="text/javascript" src="js/functions.js"></script>
@@ -52,13 +55,16 @@
 							int countDir = 0;
 							int countImg = 0;
 							int countOther = 0;
+							int idCounter = 0;
+
+
 							for (BlobItemKeyStruct b : blobs) {
 								String key = b.getKey();
 								countTotal++;
+								idCounter++;
 								String dirLast = b.getTrueName().substring(b.getTrueName().length()-1);
 								String imgLast = b.getTrueName().substring(b.getTrueName().length()-3);
 								String jpegLast = b.getTrueName().substring(b.getTrueName().length()-4);
-
 						%>
 						<tr id="tableDataUser">
 							<td>
@@ -67,19 +73,27 @@
 							if(dirLast.equals("/"))
 							{
 								countDir++;
-							%> <img id="directoyImageFile" src="img/directoryImg.svg"
+							%> <img id="directoyImageFile" src="<%=uriPathEffettiva%>img/directoryImg.svg"
 								alt="dir" /> <%}
 							else if(imgLast.equals("png") || imgLast.equals("jpg") || imgLast.equals("jpeg"))
 							{
 								countImg++;
-							%> <img id="fileImageFile" src="img/imageImg.svg" alt="imm" /> <%} 
+							%> <img id="fileImageFile" src="<%=uriPathEffettiva%>img/imageImg.svg" alt="imm" /> <%} 
 							else
 							{
 								countOther++;
-							%> <img id="fileImageFile" src="img/fileImg.svg" alt="file" /> <%}%>
+							%> <img id="fileImageFile" src="<%=uriPathEffettiva%>img/fileImg.svg" alt="file" /> <%}%>
 							</td>
 
-							<td style="width: 50%" id="fileName"><a href="<%=key%>"><label><%=b.getTrueName()%></label></a></td>
+							<td style="width: 50%" id="fileName">
+								<form role="form" method="post" action="/account/rename">
+									<input class="form-control" type="text" id="<%=idCounter%>" hidden/>
+								</form>
+								
+								<a href="<%=key%>">
+									<label id="name_<%=idCounter%>"> <%=b.getTrueName()%> </label>
+								</a>
+							</td>
 
 							<%
 							try{	
@@ -93,42 +107,43 @@
 								id="indentTags">No tags!</span></td>
 
 							<% }%>
-							<td style="width: 20%"><a href="test"> <img
-									id="deleteFile" src="img/trash.svg" alt="delete" />
-							</a> <a href="test"> <img id="renameFile"
-									src="img/renameFile.png" alt="rename" />
-							</a> <a href="test"> <img id="changeDirectory"
-									src="img/changeDirectory.svg" alt="changeDir" />
-							</a></td>
+							<td style="width: 20%" id="testo">
+								<img id="deleteFile" src="<%=uriPathEffettiva%>img/trash.svg" alt="delete" onclick="/account/delete" />
+								<img id="renameFile" src="<%=uriPathEffettiva%>img/renameFile.png" alt="rename" onclick="myFunction(this)"/>	
+								<img id="changeDirectory" src="<%=uriPathEffettiva%>img/changeDirectory.svg" alt="changeDir" onclick="/account/changeDir" />
+							</td>
 						</tr>
 						<%
 							
 							}
-							System.out.println("total "+countTotal);
-							System.out.println("Dir "+countDir);
-							System.out.println("Img "+countImg);
-							System.out.println("Other "+countOther);
 						%>
 
 					</tbody>
 				</table>
 			</div>
 			<div class="col-md-4" id="myborderDiv">
+			<div>
+				<a href="/account">
+					<button type="submit" id="buttonLogOut"
+						class="btn btn-success btn-lg btn-block">Home</button>
+				</a>
+				</div>
+				<div>
 				<a href="/logout">
 					<button type="submit" id="buttonLogOut"
 						class="btn btn-danger btn-lg btn-block">Logout</button>
 				</a>
-
+</div>
 				<div class="form-group">
 					<form role="form" method="post" action="/account/search">
-						<label for="InputSearch">Search:</label> <input type="text"
-							class="form-control" name="query" />
-
+					
+						<label for="InputSearch">Search:</label> 
+						<input type="text" class="form-control" name="query"/>
 
 					</form>
 
 				</div>
-				<!--  			
+<!--  			
 <div>
 <form method="post" action="/account/search">Search: 
 <input type="text" name="query">
@@ -196,7 +211,7 @@
 	<div class="row">
 		<div class="col-md-4"></div>
 		<div class="col-md-4">
-			<img id="imageFooter" src="img/logo_standard.png"
+			<img id="imageFooter" src="<%=uriPathEffettiva%>img/logo_standard.png"
 				class="rounded-circle" />
 		</div>
 		<div class="col-md-4">
@@ -210,7 +225,9 @@
 		</div>
 	</div>
 	<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
-	<script type="text/javascript" src="js/main.js"></script>
+	<!-- <script type="text/javascript" src="js/main.js"></script>  -->
+		<script type="text/javascript" src="js/main.js"></script>
+	
 </body>
 </html>
 

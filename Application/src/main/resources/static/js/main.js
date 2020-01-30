@@ -16,7 +16,7 @@ $(document).ready(function () {
     	create_dir_ajax(currentDir);
     });
     
-
+ 
 });
 
 function create_dir_ajax(currentDir){
@@ -88,7 +88,22 @@ function fire_ajax_submit(currentDir) {
 
         }
     });
-
 }
 
 
+
+
+function myFunction(event) {
+	
+	//setta ad hidden la label del truename
+	//var divInputText = $(event).parent().parent().children().eq(1).children("input[type=text]");
+	var divInputText = $(event).parent().parent().children().eq(1).children("form").children("input[type=text]");
+	console.log(divInputText);
+	divInputText.removeAttr('hidden');
+	
+	//aggiunge il truename del file nella inputbox
+	var textLabel = divInputText.parent().parent().children().eq(1).children("label");
+	divInputText.val(textLabel.text());
+	
+	textLabel.prop("hidden", !this.checked);
+}

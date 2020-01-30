@@ -134,34 +134,36 @@ html, body {
 	}
 }
 
-	#loginTitle{ 
-		display: inline; 
-	}
-	
-	#logoImageLogin {
-/*  float: left;
+#loginTitle {
+	display: inline;
+}
+
+#logoImageLogin {
+	/*  float: left;
   width: 450px;
   height: 150px;
   */
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
 }
-#buttonLogin{
+
+#buttonLogin {
 	margin: 5px;
 }
-#imageFooter{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 30%;
+
+#imageFooter {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 30%;
 }
 
 #h1_title_login {
-  position: relative;
-  top: 18px;
-  left: 10px;
+	position: relative;
+	top: 18px;
+	left: 10px;
 }
 
 #deleteFile, #renameFile, #changeDirectory {
@@ -181,15 +183,14 @@ html, body {
 
 #fileName {
 	font-weight: bold;
-	  margin: auto;
-  width: 50%;
+	margin: auto;
+	width: 50%;
 }
 
 #immImageFile {
 	width: 180%;
-	height: 180%;	
+	height: 180%;
 }
-
 
 #myborderDiv {
 	border-left: 5px solid #1C6EA4;

@@ -45,12 +45,11 @@ public class LoginFilter implements Filter{
 		HttpServletResponse  myResponse= (HttpServletResponse) response;
 		boringLog.debug("Filter: URL"
 				+ " called: "+httpRequest.getRequestURL().toString());
-		System.out.println("mail utente "+account.getEmail());
-		System.out.println("id utente" +account.getId());
 		
 		
 
-		if (httpRequest.getRequestURL().toString().contains("/account") && account.getEmail() == null)	{			
+		if (httpRequest.getRequestURL().toString().contains("/account") && account.getEmail() == null)	{		
+			boringLog.debug("Not passed request " + httpRequest.getRequestURI());
 			httpResponse.sendRedirect("/");
 			return;
 		}
@@ -68,10 +67,5 @@ public class LoginFilter implements Filter{
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
-		
 	}
-	
-	
-
-
 }

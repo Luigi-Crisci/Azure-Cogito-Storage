@@ -17,7 +17,6 @@ public class BlobItemKeyStruct {
 		this.trueName = trueName;
 	}
 	
-	
 	@Override
 	public String toString() {
 		return "BlobItemKeyStruct [item=" + item + ", key=" + key + ", dir=" + dir + ", trueName=" + trueName + "]";
@@ -48,8 +47,4 @@ public class BlobItemKeyStruct {
 	public void setTrueName(String trueName) {
 		this.trueName = trueName;
 	}
-	
-	
-	
-	
 }
