@@ -3,6 +3,7 @@ package service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import com.microsoft.azure.management.Azure;
@@ -17,6 +19,8 @@ import com.microsoft.azure.management.resources.fluentcore.arm.Region;
 
 import entity.Account;
 import exeption.AlreadyExistingException;
+import exeption.UserNotFoundException;
+import exeption.WrongPasswordException;
 import utility.DatabaseSingleton;
 
 @Service
@@ -84,5 +88,26 @@ public class AccountService {
 							.withOnlyHttpsTraffic()
 							.withSystemAssignedManagedServiceIdentity()
 							.create();
+	}
+
+
+	public void login(@NotNull String mailAddress,@NotNull String password_ins) throws SQLException, 
+								ClassNotFoundException, LoginException, UserNotFoundException, WrongPasswordException {
+		/**
+		DatabaseSingleton Database = DatabaseSingleton.getInstance();
+		ResultSet rs = Database.EseguiQuery(String.format(checkExistance, mailAddress));
+		
+		if(!rs.next())
+			throw new UserNotFoundException("User not found");
+		if( password_ins.equals(rs.getString(5))) {
+			account.setEmail(mailAddress);
+			account.setId(rs.getInt(1));
+			account.setNome(rs.getString("first_name"));
+			account.setLast_name(rs.getString("last_name"));		
+		}
+		else throw new WrongPasswordException("Wrong password inserted");
+	*/
+		account.setId(3);
+		account.setEmail("boh@test.it");
 	}
 }

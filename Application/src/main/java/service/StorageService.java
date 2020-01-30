@@ -276,7 +276,8 @@ public class StorageService {
 	 * @throws BlobNotFoundExeption
 	 * @throws AlreadyExistingException
 	 */
-	public void rename(String blobName,String newFilename,boolean overwrite) throws BlobNotFoundExeption, AlreadyExistingException, IllegalArgumentException {
+	public synchronized void rename(String blobName,String newFilename,boolean overwrite) throws BlobNotFoundExeption, AlreadyExistingException, IllegalArgumentException {
+		
 		BlobClient oldBlobClient=blobContainerClient.getBlobClient(blobName);
 		if(!oldBlobClient.exists())
 			throw new BlobNotFoundExeption(String.format("Blob %s not found", blobName));
