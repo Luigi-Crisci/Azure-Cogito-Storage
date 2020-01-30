@@ -33,15 +33,16 @@ public class LoginController {
 				@RequestParam(name = "passwd", required = true) String password_ins)throws ClassNotFoundException {
 		
 		DatabaseSingleton Database = DatabaseSingleton.getInstance();
-		String query="select id, password from [dbo].[utente] where email = '"+ mailAddress +"';";
+		String query="select * from [dbo].[utente] where email = '"+ mailAddress +"';";
 		ResultSet rs = Database.EseguiQuery(query);
 		try {
 			while(rs.next())
 			{
-				if( password_ins.equals(rs.getString(2))) {
+				if( password_ins.equals(rs.getString(5))) {
 					account.setEmail(mailAddress);
 					account.setId(rs.getInt(1));
-				
+					account.setNome(rs.getString("first_name"));
+					account.setLast_name(rs.getString("last_name"));
 					
 					return "redirect:/account";				
 				}

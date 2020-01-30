@@ -114,7 +114,7 @@
 				</table>
 			</div>
 			<div class="col-md-4" id="myborderDiv">
-				<a href="/">
+				<a href="/logout">
 					<button type="submit" id="buttonLogOut"
 						class="btn btn-danger btn-lg btn-block">Logout</button>
 				</a>

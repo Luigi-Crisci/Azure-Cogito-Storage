@@ -9,8 +9,7 @@ import org.springframework.web.context.annotation.SessionScope;
 @Component
 @SessionScope
 public class Account {
-	
-	//da public a private	
+
 	private Integer id;
 	private String email;
 	private String first_name;
@@ -18,8 +17,32 @@ public class Account {
 	private String password;
 	
 	public Account() {
-		
+		email=first_name=last_name=password=null;
+		id=null;
 	}
+	
+	public Account(Integer id, String email, String first_name, String last_name, String password) {
+		super();
+		this.id = id;
+		this.email = email;
+		this.first_name = first_name;
+		this.last_name = last_name;
+		this.password = password;
+	}
+	
+	public Account(Account tmpAccount) {
+		super();
+		copyAccount(tmpAccount);
+	}
+	
+	public void copyAccount(Account tmpAccount) {
+			this.id = tmpAccount.id;
+			this.email = tmpAccount.email;
+			this.first_name = tmpAccount.first_name;
+			this.last_name = tmpAccount.last_name;
+			this.password = tmpAccount.password;
+	}
+	
 	
 	public Integer getId() {
 		return id;

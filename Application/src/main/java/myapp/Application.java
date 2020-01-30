@@ -8,7 +8,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+
+import filter.LoginFilter;
+
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
@@ -58,5 +62,14 @@ public class Application extends SpringBootServletInitializer{
         };
     }
     */
+    
+//	@Bean
+//	public FilterRegistrationBean LoginFilterRegistration(){
+//		FilterRegistrationBean login = new FilterRegistrationBean();
+//		login.setFilter(new LoginFilter());
+//		login.setOrder(1);
+//		login.addUrlPatterns("/account*");
+//		return login;
+//	}
 
 }
