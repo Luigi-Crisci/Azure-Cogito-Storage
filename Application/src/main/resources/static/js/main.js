@@ -16,15 +16,41 @@ $(document).ready(function () {
     	create_dir_ajax(currentDir);
     });
     
- 
+    
 });
+
+function functionDelete(event){
+	
+	var divInputText = $(event).parent().parent().children().eq(1).children("form").children("input[type=text]");
+	var fileDaEliminare = divInputText.parent().parent().children().eq(1).children("label").text();
+
+	$.ajax({
+		type: "POST",
+		url: "/account/delete",
+		data: fileDaEliminare,
+        //http://api.jquery.com/jQuery.ajax/
+        //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+        processData: false, //prevent jQuery from automatically transforming the data into a query string
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (fileDaEliminare) {
+            console.log("SUCCESS : ", fileDaEliminare);
+        },
+        error: function (e) {
+            console.log("ERROR : ", e);
+        }
+	});
+}
+
+
 
 function create_dir_ajax(currentDir){
 	var form=$('#createDirForm')[0];
 	var data=new FormData(form);
 	data.set("dir",currentDir);
 	  $("#createDirSubmit").prop("disabled", true);
-
+	  
 	    $.ajax({
 	        type: "POST",
 	        //enctype: 'multipart/form-data',
@@ -37,7 +63,7 @@ function create_dir_ajax(currentDir){
 	        cache: false,
 	        timeout: 600000,
 	        success: function (data) {
-
+	        	
 	            $("#result").text(data);
 	            console.log("SUCCESS : ", data);
 	            $("#createDirSubmit").prop("disabled", false);
@@ -89,8 +115,6 @@ function fire_ajax_submit(currentDir) {
         }
     });
 }
-
-
 
 
 function myFunction(event) {

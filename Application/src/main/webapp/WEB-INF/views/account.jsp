@@ -103,8 +103,8 @@
 
                                                             <% }%>
                                                                 <td style="width: 20%" id="testo">
-                                                                    <img id="deleteFile" src="<%=uriPathEffettiva%>img/trash.svg" alt="delete" onclick="/account/delete" />
-                                                                    <img id="renameFile" src="<%=uriPathEffettiva%>img/renameFile.png" alt="rename" onclick="myFunction(this)" />
+                                                                    <img id="deleteFile" src="<%=uriPathEffettiva%>img/trash.svg" alt="delete" onclick="functionDelete(this)"/>
+                                                                    <img  id="renameFile" src="<%=uriPathEffettiva%>img/renameFile.png" alt="rename" onclick="myFunction(this)" />
                                                                     <img id="changeDirectory" src="<%=uriPathEffettiva%>img/changeDirectory.svg" alt="changeDir" onclick="/account/changeDir" />
                                                                 </td>
                                                 </tr>
@@ -143,7 +143,7 @@
                                     <form role="form" method="post" id="createDirForm">
                                         <label for="InputSearch">New directory name:</label>
                                         <input type="text" name="dirName" class="form-control">
-                                        <input type="submit" class="form-control" value="Create" id="createDirSubmit" onClick="window.location.reload();" />
+                                        <!-- questo è il bottone --><input type="submit" class="form-control" value="Create" id="createDirSubmit" onClick="window.location.reload();" />
                                     </form>
 
                                     <!--  			
