@@ -201,3 +201,8 @@ html, body {
 	border-top: 5px solid #1C6EA4;
 	border-radius: 0px;
 }
+
+#buttonLogOut {
+	position: absolute;
+  	bottom: 0px;
+}

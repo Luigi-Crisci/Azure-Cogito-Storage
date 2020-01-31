@@ -93,7 +93,7 @@ public class AccountService {
 
 	public void login(@NotNull String mailAddress,@NotNull String password_ins) throws SQLException, 
 								ClassNotFoundException, LoginException, UserNotFoundException, WrongPasswordException {
-		/**
+		
 		DatabaseSingleton Database = DatabaseSingleton.getInstance();
 		ResultSet rs = Database.EseguiQuery(String.format(checkExistance, mailAddress));
 		
@@ -106,8 +106,8 @@ public class AccountService {
 			account.setLast_name(rs.getString("last_name"));		
 		}
 		else throw new WrongPasswordException("Wrong password inserted");
-	*/
-		account.setId(3);
-		account.setEmail("boh@test.it");
+	
+		//account.setId(3);
+		//account.setEmail("boh@test.it");
 	}
 }
