@@ -138,6 +138,12 @@ html, body {
 	display: inline;
 }
 
+/**
+#tableDataUser {
+	line-height: 75px;
+}
+*/
+
 #logoImageLogin {
 	/*  float: left;
   width: 450px;
@@ -172,9 +178,11 @@ html, body {
 }
 
 #directoyImageFile, #fileImageFile {
-	width: 280%;
-	height: 280%;
+	width: 200%;
+	height: 9%;
 }
+
+
 
 #accountHome {
 	width: 5%;

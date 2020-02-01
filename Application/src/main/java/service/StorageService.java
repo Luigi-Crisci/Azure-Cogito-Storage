@@ -129,6 +129,8 @@ public class StorageService {
 		//Generate String for each blob
 		ListBlobsOptions options= new ListBlobsOptions();
 		BlobListDetails detail= new BlobListDetails();
+		detail.setRetrieveDeletedBlobs(false); //Do not retrieve deleted blobs
+		detail.setRetrieveSnapshots(false); //Do not retrieve any snapshot of any file
 		detail.setRetrieveMetadata(true);
 		options.setDetails(detail);
 		
@@ -255,14 +257,26 @@ public class StorageService {
 	 * @param fileName blob file name
 	 * @return if has been deleted
 	 */
-	public boolean delete(String fileName) {
+	public boolean delete(String filename) {
+		filename = filename.trim();
 		try {
-			logger.info("Deleting blob : " + fileName);
-			blobContainerClient.getBlobClient(fileName).delete(); //delete the requested Blob
+			logger.info("Deleting blob : " + filename);
+			
+			if(filename.endsWith("/")) {
+				//Is a directory, delete all files inside it
+				List<BlobItemKeyStruct> list = retrieve(filename);
+				for(BlobItemKeyStruct b : list) 
+					delete(filename+b.getTrueName());
+				delete(filename+".blank"); //delete the blank file. It is not returned from retrieve function
+			}
+			else
+				blobContainerClient.getBlobClient(filename).delete(); //delete the requested Blob
+			
 			logger.info("Delete completed");
 			return true;
 		}catch(Exception e) {
-				logger.info("Unable to delete blob");
+				logger.info("Unable to delete blob: \n");
+				e.printStackTrace();
 				return false;
 			}
 	}

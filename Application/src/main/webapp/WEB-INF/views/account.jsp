@@ -4,13 +4,14 @@
             <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"
 	import="java.util.*,com.azure.storage.blob.models.*"%>
-
-                <% String uriPath = request.getRequestURL().toString();
-	String uriPathEffettiva = uriPath.substring(0, uriPath.lastIndexOf("WEB-INF")) ; %>
                     <!DOCTYPE html>
                     <html>
 
                     <head>
+                        <script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+                        <!-- <script type="text/javascript" src="js/main.js"></script>  -->
+                        <script type="text/javascript" src="js/main.js"></script>
+                    
                         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
                         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
@@ -18,7 +19,12 @@
                         <meta http-equiv="X-UA-Compatible" content="IE=edge">
                         <meta name="viewport" content="width=device-width, initial-scale=1">
                         <title>Account</title>
-                        <link href="css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Needed for making url position-resistant -->                    
+    <% String uriPath = request.getRequestURL().toString();
+	String uriPathEffettiva = uriPath.substring(0, uriPath.lastIndexOf("WEB-INF")) ; 
+	%>
+	
                         <link href="<%=uriPathEffettiva%>css/site.css" rel="stylesheet">
 
                         <script type="text/javascript" src="js/functions.js"></script>
@@ -32,6 +38,11 @@
                                     <h3>Ciao, NOME_UTENTE</h3>
                                 </div>
                             </div>
+                            
+                            
+                            <!-- FILE TABLE START -->
+                            
+                            
                             <div class="row">
                                 <div class="col-md-8">
                                     <table class="table table-hover">
@@ -51,34 +62,40 @@
 							int countImg = 0;
 							int countOther = 0;
 							int idCounter = 0;
+							String filename,dirName = "";
 
 							for (BlobItemKeyStruct b : blobs) {
 								String key = b.getKey();
 								countTotal++;
 								idCounter++;
-
-								String dirLast = b.getTrueName().substring(b.getTrueName().length()-1);
-								String imgLast = b.getTrueName().substring(b.getTrueName().length()-3);
-								String jpegLast = b.getTrueName().substring(b.getTrueName().length()-4);
+								filename = b.getTrueName();
+								
+								//TODO: Only to make it work, a dir path should be added to BlobKeyItemStruct
+								//It should be placed outside this FOR
+								if(!b.getTrueName().equals("/"))
+									if(b.isDir())
+										dirName = b.getKey().substring(b.getKey().indexOf('=') + 1, b.getKey().lastIndexOf(filename));
+									else if(b.getItem().getName().contains("/")) //Not in the root folder
+										dirName = b.getItem().getName().substring(0, b.getItem().getName().lastIndexOf("/") + 1);
 						%>
                                                 <tr id="tableDataUser">
                                                     <td>
                                                         <%
 
-							if(dirLast.equals("/"))
+							if(filename.endsWith("/"))
 							{
 								countDir++;
-							%> <img id="directoyImageFile" src="<%=uriPathEffettiva%>img/directoryImg.svg" alt="dir" />
+							%> <img id="directoyImageFile" src="<%=uriPathEffettiva%>img/directoryImg.png" alt="dir" />
                                                             <%}
-							else if(imgLast.equals("png") || imgLast.equals("jpg") || imgLast.equals("jpeg"))
+							else if(filename.contains("png") || filename.contains("jpg") || filename.contains("jpeg"))
 							{
 								countImg++;
-							%> <img id="fileImageFile" src="<%=uriPathEffettiva%>img/imageImg.svg" alt="imm" />
+							%> <img id="fileImageFile" src="<%=uriPathEffettiva%>img/imageImg.png" alt="imm" />
                                                                 <%} 
 							else
 							{
 								countOther++;
-							%> <img id="fileImageFile" src="<%=uriPathEffettiva%>img/fileImg.svg" alt="file" />
+							%> <img id="fileImageFile" src="<%=uriPathEffettiva%>img/fileImg.png" alt="file" />
                                                                     <%}%>
                                                     </td>
 
@@ -88,7 +105,7 @@
                                                         </form>
 
                                                         <a href="<%=key%>">
-									<label id="name_<%=idCounter%>"> <%=b.getTrueName()%> </label>
+									<label id="name_<%=idCounter%>"><%=b.getTrueName()%></label>
 								</a>
                                                     </td>
 
@@ -103,7 +120,7 @@
 
                                                             <% }%>
                                                                 <td style="width: 20%" id="testo">
-                                                                    <img id="deleteFile" src="<%=uriPathEffettiva%>img/trash.svg" alt="delete" onclick="functionDelete(this)"/>
+                                                                    <img id="deleteFile" src="<%=uriPathEffettiva%>img/trash.svg" alt="delete" onclick="functionDelete(this,'<%=dirName%>')"/>
                                                                     <img  id="renameFile" src="<%=uriPathEffettiva%>img/renameFile.png" alt="rename" onclick="myFunction(this)" />
                                                                     <img id="changeDirectory" src="<%=uriPathEffettiva%>img/changeDirectory.svg" alt="changeDir" onclick="/account/changeDir" />
                                                                 </td>
@@ -115,6 +132,17 @@
 
                                         </tbody>
                                     </table>
+                                    
+                                    
+                                    
+                                    
+                                 <!-- FILE TABLE END -->   
+                                    
+                                    
+                                    
+                                    
+                                    
+   
                                 </div>
                                 <div class="col-md-4" id="myborderDiv">
                                     <div>
@@ -132,6 +160,7 @@
                                         </form>
 
                                     </div>
+                                    
                                     <!--  			
 <div>
 <form method="post" action="/account/search">Search: 
@@ -209,10 +238,6 @@
                                 </dl>
                             </div>
                         </div>
-                        <script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
-                        <!-- <script type="text/javascript" src="js/main.js"></script>  -->
-                        <script type="text/javascript" src="js/main.js"></script>
-
                     </body>
 
                     </html>

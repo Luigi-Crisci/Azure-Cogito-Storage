@@ -19,25 +19,34 @@ $(document).ready(function () {
     
 });
 
-function functionDelete(event){
+function functionDelete(event,str){
 	
 	var divInputText = $(event).parent().parent().children().eq(1).children("form").children("input[type=text]");
-	var fileDaEliminare = divInputText.parent().parent().children().eq(1).children("label").text();
+	var fileRequested= divInputText.parent().parent().children().eq(1).children("label").text();
 
+	var form=$('#createDirForm')[0];
+	var data=new FormData(form);
+	data.set("file",str+fileRequested);
+
+	
+	
+	
 	$.ajax({
 		type: "POST",
 		url: "/account/delete",
-		data: fileDaEliminare,
+		data: data,
         //http://api.jquery.com/jQuery.ajax/
         //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
         processData: false, //prevent jQuery from automatically transforming the data into a query string
         contentType: false,
         cache: false,
         timeout: 600000,
-        success: function (fileDaEliminare) {
-            console.log("SUCCESS : ", fileDaEliminare);
+        success: function (data) {
+            $("#result").text(data);
+            console.log("SUCCESS : ", data);
         },
         error: function (e) {
+        	$("#result").text(e.responseText);
             console.log("ERROR : ", e);
         }
 	});
