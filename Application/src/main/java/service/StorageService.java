@@ -299,7 +299,9 @@ public class StorageService {
 		if(!overwrite && newBlobClient.exists())
 			throw new AlreadyExistingException(String.format("Blob %s already existing! Set overwrite to write on it", newFilename));
 		
-		newBlobClient.copyFromUrl(oldBlobClient.getBlobUrl());
+		key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
+		newBlobClient.copyFromUrl(createAccessLink(blobName, key));
+		
 		oldBlobClient.delete();
 	} 
 

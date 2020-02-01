@@ -100,9 +100,7 @@
                                                     </td>
 
                                                     <td style="width: 50%" id="fileName">
-                                                        <form role="form" method="post" action="/account/rename">
-                                                            <input class="form-control" type="text" id="<%=idCounter%>" hidden/>
-                                                        </form>
+                                                            <input class="form-control" type="text" id="rename_<%=idCounter%>" onkeyup="rename(event)" hidden/>
 
                                                         <a href="<%=key%>">
 									<label id="name_<%=idCounter%>"><%=b.getTrueName()%></label>
@@ -121,7 +119,7 @@
                                                             <% }%>
                                                                 <td style="width: 20%" id="testo">
                                                                     <img id="deleteFile" src="<%=uriPathEffettiva%>img/trash.svg" alt="delete" onclick="functionDelete(this,'<%=dirName%>')"/>
-                                                                    <img  id="renameFile" src="<%=uriPathEffettiva%>img/renameFile.png" alt="rename" onclick="myFunction(this)" />
+                                                                    <img  id="renameFile" src="<%=uriPathEffettiva%>img/renameFile.png" alt="rename" onclick="showRename(this)" />
                                                                     <img id="changeDirectory" src="<%=uriPathEffettiva%>img/changeDirectory.svg" alt="changeDir" onclick="/account/changeDir" />
                                                                 </td>
                                                 </tr>
@@ -172,7 +170,7 @@
                                     <form role="form" method="post" id="createDirForm">
                                         <label for="InputSearch">New directory name:</label>
                                         <input type="text" name="dirName" class="form-control">
-                                        <!-- questo è il bottone --><input type="submit" class="form-control" value="Create" id="createDirSubmit" onClick="window.location.reload();" />
+                                        <!-- questo ï¿½ il bottone --><input type="submit" class="form-control" value="Create" id="createDirSubmit" onClick="window.location.reload();" />
                                     </form>
 
                                     <!--  			

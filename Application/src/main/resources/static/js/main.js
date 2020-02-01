@@ -15,8 +15,7 @@ $(document).ready(function () {
     	event.preventDefault();
     	create_dir_ajax(currentDir);
     });
-    
-    
+
 });
 
 function functionDelete(event,str){
@@ -28,9 +27,6 @@ function functionDelete(event,str){
 	var data=new FormData(form);
 	data.set("file",str+fileRequested);
 
-	
-	
-	
 	$.ajax({
 		type: "POST",
 		url: "/account/delete",
@@ -125,18 +121,84 @@ function fire_ajax_submit(currentDir) {
     });
 }
 
+var oldFilenameRename;
+var lastRenamedBox = null;
 
-function myFunction(event) {
+function showRename(event) {
 	
 	//setta ad hidden la label del truename
 	//var divInputText = $(event).parent().parent().children().eq(1).children("input[type=text]");
-	var divInputText = $(event).parent().parent().children().eq(1).children("form").children("input[type=text]");
+
+	//Hide all others rename box
+	if(lastRenamedBox != null && lastRenamedBox.prop("disabled") == false){
+		lastRenamedBox.prop("hidden",true);
+		lastRenamedBox.parent().children().eq(1).children("label").prop("hidden",false);
+	}
+		
+
+	divInputText = $(event).parent().parent().children().eq(1).children("input[type=text]");
+	lastRenamedBox = divInputText; //I save it for following calls
+
 	console.log(divInputText);
 	divInputText.removeAttr('hidden');
 	
 	//aggiunge il truename del file nella inputbox
-	var textLabel = divInputText.parent().parent().children().eq(1).children("label");
+	var textLabel = divInputText.parent().children().eq(1).children("label");
 	divInputText.val(textLabel.text());
+
+	oldFilenameRename = textLabel.text(); //Need it when rename function is called
+	console.log("Old filename: " + oldFilenameRename);
+	textLabel.prop("hidden", true);
+}
+
+
+function rename(event) {
+	var code = event.which || event.keyCode;
+	if(code != 13)
+		return;
+
+	var currentlyRenamingBox = lastRenamedBox;
+	var currentlyOldFilename = oldFilenameRename;
+
+	currentlyRenamingBox.prop("disabled",true);
+
+	var form=$('#createDirForm')[0];
+	var data=new FormData(form);
+	data.set("oldFilename",currentlyOldFilename);
+	data.set("newFilename",currentlyRenamingBox.val());
+	data.set("overwrite",true);
+
+	console.log(data);
+
 	
-	textLabel.prop("hidden", !this.checked);
+	$.ajax({
+		type: "POST",
+		url: "/account/rename",
+		data: data,
+        //http://api.jquery.com/jQuery.ajax/
+        //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+        processData: false, //prevent jQuery from automatically transforming the data into a query string
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+            $("#result").text(data);
+			console.log("SUCCESS : ", data);
+			var textLabel = currentlyRenamingBox.parent().children().eq(1).children("label");
+			textLabel.text(currentlyRenamingBox.val());
+			currentlyRenamingBox.prop("hidden",true);
+			textLabel.prop("hidden",false);
+			currentlyRenamingBox.removeAttr("disabled");
+        },
+        error: function (e) {
+        	$("#result").text(e.responseText);
+			console.log("ERROR : ", e);
+			var textLabel = currentlyRenamingBox.parent().children().eq(1).children("label");
+			currentlyRenamingBox.prop("hidden",true);
+			textLabel.prop("hidden",false);
+			currentlyRenamingBox.removeAttr("disabled");
+        }
+	});
+
+	
 }
