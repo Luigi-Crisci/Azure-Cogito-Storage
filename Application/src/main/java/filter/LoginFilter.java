@@ -30,19 +30,13 @@ public class LoginFilter implements Filter{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+
+		HttpServletRequest httpRequest= (HttpServletRequest) request;
+		HttpServletResponse httpResponse= (HttpServletResponse) response;
 		
-		HttpServletRequest httpRequest=null;
-		HttpServletResponse httpResponse=null;
-		
-		httpRequest= (HttpServletRequest) request;
-		httpResponse= (HttpServletResponse) response;
-		
-		HttpServletResponse  myResponse= (HttpServletResponse) response;
 		logger.debug("Filter: URL"
 				+ " called: "+httpRequest.getRequestURL().toString());
 		
-		
-
 		if (httpRequest.getRequestURL().toString().contains("/account") && account.getEmail() == null)	{		
 			logger.debug("Not passed request " + httpRequest.getRequestURI());
 			httpResponse.sendRedirect("/");

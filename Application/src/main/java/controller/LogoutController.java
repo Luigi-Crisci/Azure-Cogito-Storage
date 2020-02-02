@@ -10,9 +10,6 @@ import entity.*;
 @Controller
 public class LogoutController {
 	
-	@Autowired
-	private Account account;
-	
 	@GetMapping("/logout")
 	public String logout(HttpSession httpSession) {
 		if(httpSession!=null)

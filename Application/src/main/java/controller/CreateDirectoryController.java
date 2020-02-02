@@ -18,8 +18,9 @@ public class CreateDirectoryController {
 	@PostMapping("/account/createDir")
 	public ResponseEntity<?> createDir(@RequestParam(name = "dirName", required = true) String name, 
 			 @RequestParam(name = "dir",required = false, defaultValue = "") String currentDir) {
+		
 		return storageController.createDir(name,currentDir) ?
 				new ResponseEntity<>("Created",HttpStatus.OK) : 
-				new ResponseEntity<>("Error",HttpStatus.INTERNAL_SERVER_ERROR);
+				new ResponseEntity<>("Error while creating directory",HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

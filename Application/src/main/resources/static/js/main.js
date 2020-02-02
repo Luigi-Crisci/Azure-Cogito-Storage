@@ -127,9 +127,6 @@ var lastRenamedBox = null;
 
 function showRename(event) {
 	
-	//setta ad hidden la label del truename
-	//var divInputText = $(event).parent().parent().children().eq(1).children("input[type=text]");
-
 	//Hide all others rename box
 	if(lastRenamedBox != null && lastRenamedBox.prop("disabled") == false){
 		lastRenamedBox.prop("hidden",true);
@@ -176,15 +173,13 @@ function rename(event,dirName) {
 		type: "POST",
 		url: "/account/rename",
 		data: data,
-        //http://api.jquery.com/jQuery.ajax/
-        //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
         processData: false, //prevent jQuery from automatically transforming the data into a query string
         contentType: false,
         cache: false,
         timeout: 600000,
         success: function (data) {
-            $("#result").text(data);
-			console.log("SUCCESS : ", data);
+            $("#result").text("SUCCESS : renamed successfully!");
+			console.log("SUCCESS : renamed successfully!");
 			var textLabel = currentlyRenamingBox.parent().children().eq(1).children("label");
 			textLabel.text(currentlyRenamingBox.val());
 			currentlyRenamingBox.prop("hidden",true);

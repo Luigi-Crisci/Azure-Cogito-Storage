@@ -24,9 +24,12 @@ public class AccountController {
 	@Autowired
 	private StorageService storageBeanController;
 	
+	@Autowired
+	HttpSession session;
+	
 	@GetMapping("/account")
-	public String getUri(Model model,HttpServletRequest request,@RequestParam(required = false, name = "dir",defaultValue = "") String path) throws IOException {
-		HttpSession session = request.getSession();
+	public String getUri(@RequestParam(required = false, name = "dir",defaultValue = "") String path) throws IOException {
+		
 		List<BlobItemKeyStruct> blobs=storageBeanController.retrieve(path);
 		session.setAttribute("Files", blobs);
 		return "account";

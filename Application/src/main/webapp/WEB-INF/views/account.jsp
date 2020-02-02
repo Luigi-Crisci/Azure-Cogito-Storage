@@ -1,7 +1,7 @@
-<%@page import="entity.BlobItemKeyStruct"%>
-    <%@page import="java.util.stream.Collectors"%>
-        <%@page import="java.util.stream.Collector"%>
-            <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@page import="entity.*"%>
+<%@page import="java.util.stream.Collectors"%>
+<%@page import="java.util.stream.Collector"%>
+<%@page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"
 	import="java.util.*,com.azure.storage.blob.models.*"%>
                     <!DOCTYPE html>
@@ -23,6 +23,8 @@
     <!-- Needed for making url position-resistant -->                    
     <% String uriPath = request.getRequestURL().toString();
 	String uriPathEffettiva = uriPath.substring(0, uriPath.lastIndexOf("WEB-INF")) ; 
+	Account account = (Account) request.getSession().getAttribute("account");
+	
 	%>
 	
                         <link href="<%=uriPathEffettiva%>css/site.css" rel="stylesheet">
@@ -35,7 +37,7 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h3>Ciao, NOME_UTENTE</h3>
+                                    <h3>Ciao, <%=account.getNome()%></h3>
                                 </div>
                             </div>
                             
@@ -193,7 +195,7 @@
 						value="Submit" id="btnSubmit" />
 				</form>
 -->
-                                    <h1>Ajax Post Result</h1>
+                                    <h1>Console</h1>
                                     <dl>
                                         <dt>
 						Numero oggetti totali:
