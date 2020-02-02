@@ -30,8 +30,9 @@ public class RenameController {
 				ow=false;
 			}
 			
+			String newKey = null;
 			try {
-					storageService.rename(oldFilename, newFilename, ow);
+					newKey = storageService.rename(oldFilename, newFilename, ow);
 				} catch (IllegalArgumentException e) {
 					return new ResponseEntity<>("Error while deleting blob, plese try later",HttpStatus.INTERNAL_SERVER_ERROR);
 				} catch (BlobNotFoundExeption e) {
@@ -41,7 +42,8 @@ public class RenameController {
 							+ "or check the overwrite label",HttpStatus.BAD_REQUEST);
 				}
 			
-			return new ResponseEntity<>("Renamed successfully",HttpStatus.OK);
+			
+			return new ResponseEntity<>("{ \"key\": \""+newKey+"\" }",HttpStatus.OK);
 		
 	}
 

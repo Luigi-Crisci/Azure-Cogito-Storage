@@ -10,25 +10,20 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import com.azure.core.http.HttpResponse;
 
 import entity.Account;
-import entity.BoringLog;
 
 @Component
 @Order(1)
 public class LoginFilter implements Filter{
 
 	@Autowired
-	BoringLog boringLog;
+	Logger logger;
 	@Autowired
 	Account account;
 	
@@ -43,13 +38,13 @@ public class LoginFilter implements Filter{
 		httpResponse= (HttpServletResponse) response;
 		
 		HttpServletResponse  myResponse= (HttpServletResponse) response;
-		boringLog.debug("Filter: URL"
+		logger.debug("Filter: URL"
 				+ " called: "+httpRequest.getRequestURL().toString());
 		
 		
 
 		if (httpRequest.getRequestURL().toString().contains("/account") && account.getEmail() == null)	{		
-			boringLog.debug("Not passed request " + httpRequest.getRequestURI());
+			logger.debug("Not passed request " + httpRequest.getRequestURI());
 			httpResponse.sendRedirect("/");
 			return;
 		}

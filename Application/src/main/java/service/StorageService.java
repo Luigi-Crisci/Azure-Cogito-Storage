@@ -140,7 +140,7 @@ public class StorageService {
 		//Omega tarantella
 		String regexPath=path.replaceAll("\\/", "\\/");
 		blobs.stream()
-		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w.\\s%-]*", e.getName()) && !e.getName().contains(".blank"))
+		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w.\\()s%-_]*", e.getName()) && !e.getName().contains(".blank"))
 		.forEach(e->{
 			final String name = e.getName();
 			String trueName= name.contains("/") ? name.substring(name.lastIndexOf('/')+1) : name;
@@ -198,7 +198,23 @@ public class StorageService {
 	 * @throws IOException
 	 */
 	public void uploadFile(Part file,String path) throws IOException{
-		BlobClient blobClient=blobContainerClient.getBlobClient(path+file.getSubmittedFileName());
+		String filename = path+file.getSubmittedFileName();
+		BlobClient blobClient=blobContainerClient.getBlobClient(filename);
+		
+		if(blobClient.exists()) { //If a file with the same name exists, generate a new progressive name 
+			int i = 1;
+			while(true) {
+				String tmpFilename = filename.substring(0, filename.lastIndexOf('.')) + "(" + i + ")" + filename.substring(filename.lastIndexOf('.'));
+				blobClient = blobContainerClient.getBlobClient(tmpFilename);
+				if(blobClient.exists()) {
+					i++;
+					continue;
+				}
+				filename = tmpFilename;
+				break;
+			}
+		}
+		
 		BlobOutputStream blobOutputStream=blobClient.getBlockBlobClient().getBlobOutputStream();
 		InputStream fileStream = file.getInputStream();
 		byte[] b= new byte[20*1024*1024];
@@ -290,7 +306,7 @@ public class StorageService {
 	 * @throws BlobNotFoundExeption
 	 * @throws AlreadyExistingException
 	 */
-	public synchronized void rename(String blobName,String newFilename,boolean overwrite) throws BlobNotFoundExeption, AlreadyExistingException, IllegalArgumentException {
+	public synchronized String rename(String blobName,String newFilename,boolean overwrite) throws BlobNotFoundExeption, AlreadyExistingException, IllegalArgumentException {
 		
 		BlobClient oldBlobClient=blobContainerClient.getBlobClient(blobName);
 		if(!oldBlobClient.exists())
@@ -301,8 +317,9 @@ public class StorageService {
 		
 		key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
 		newBlobClient.copyFromUrl(createAccessLink(blobName, key));
-		
 		oldBlobClient.delete();
+		
+		return createAccessLink(newFilename, key);
 	} 
 
 

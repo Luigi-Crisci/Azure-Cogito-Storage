@@ -18,38 +18,6 @@ $(document).ready(function () {
 
 });
 
-function functionDelete(event,str){
-	
-	var divInputText = $(event).parent().parent().children().eq(1).children("form").children("input[type=text]");
-	var fileRequested= divInputText.parent().parent().children().eq(1).children("label").text();
-
-	var form=$('#createDirForm')[0];
-	var data=new FormData(form);
-	data.set("file",str+fileRequested);
-
-	$.ajax({
-		type: "POST",
-		url: "/account/delete",
-		data: data,
-        //http://api.jquery.com/jQuery.ajax/
-        //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
-        processData: false, //prevent jQuery from automatically transforming the data into a query string
-        contentType: false,
-        cache: false,
-        timeout: 600000,
-        success: function (data) {
-            $("#result").text(data);
-            console.log("SUCCESS : ", data);
-        },
-        error: function (e) {
-        	$("#result").text(e.responseText);
-            console.log("ERROR : ", e);
-        }
-	});
-}
-
-
-
 function create_dir_ajax(currentDir){
 	var form=$('#createDirForm')[0];
 	var data=new FormData(form);
@@ -121,6 +89,39 @@ function fire_ajax_submit(currentDir) {
     });
 }
 
+function functionDelete(event,str){
+	
+	var divInputText = $(event).parent().parent().children().eq(1).children("input[type=text]");
+    var textLabel = divInputText.parent().children().eq(1).children("label");
+
+	console.log("File to be deleted: " + textLabel.text());
+
+	var form=$('#createDirForm')[0];
+	var data=new FormData(form);
+	data.set("file",str+textLabel.text());
+
+	$.ajax({
+		type: "POST",
+		url: "/account/delete",
+		data: data,
+        //http://api.jquery.com/jQuery.ajax/
+        //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+        processData: false, //prevent jQuery from automatically transforming the data into a query string
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+            $("#result").text(data);
+			console.log("SUCCESS : ", data);
+			divInputText.parent().parent().remove();
+        },
+        error: function (e) {
+        	$("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+        }
+	});
+}
+
 var oldFilenameRename;
 var lastRenamedBox = null;
 
@@ -152,7 +153,7 @@ function showRename(event) {
 }
 
 
-function rename(event) {
+function rename(event,dirName) {
 	var code = event.which || event.keyCode;
 	if(code != 13)
 		return;
@@ -164,8 +165,8 @@ function rename(event) {
 
 	var form=$('#createDirForm')[0];
 	var data=new FormData(form);
-	data.set("oldFilename",currentlyOldFilename);
-	data.set("newFilename",currentlyRenamingBox.val());
+	data.set("oldFilename",dirName + currentlyOldFilename);
+	data.set("newFilename",dirName + currentlyRenamingBox.val());
 	data.set("overwrite",true);
 
 	console.log(data);
@@ -189,6 +190,14 @@ function rename(event) {
 			currentlyRenamingBox.prop("hidden",true);
 			textLabel.prop("hidden",false);
 			currentlyRenamingBox.removeAttr("disabled");
+
+			//Set new download key
+			var keyObj = jQuery.parseJSON(data);
+			console.log(keyObj.key);
+
+			console.log(textLabel.parent());
+			textLabel.parent().prop("href",keyObj.key);
+
         },
         error: function (e) {
         	$("#result").text(e.responseText);

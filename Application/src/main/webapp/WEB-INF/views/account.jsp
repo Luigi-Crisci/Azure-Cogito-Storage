@@ -100,11 +100,10 @@
                                                     </td>
 
                                                     <td style="width: 50%" id="fileName">
-                                                            <input class="form-control" type="text" id="rename_<%=idCounter%>" onkeyup="rename(event)" hidden/>
-
-                                                        <a href="<%=key%>">
-									<label id="name_<%=idCounter%>"><%=b.getTrueName()%></label>
-								</a>
+                                                            <input class="form-control" type="text" id="rename_<%=idCounter%>" onkeyup="rename(event,'<%=dirName%>')" hidden/>
+                                                            <a href="<%=key%>">
+									                            <label id="name_<%=idCounter%>"><%=b.getTrueName()%></label>
+								                            </a>
                                                     </td>
 
                                                     <%
