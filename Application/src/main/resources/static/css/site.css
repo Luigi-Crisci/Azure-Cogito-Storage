@@ -172,16 +172,15 @@ html, body {
 	left: 10px;
 }
 
-#deleteFile, #renameFile, #changeDirectory {
-	width: 10%;
-	height: 10%;
+#deleteFile, #renameFile {
+	width: 13%;
+	height: 13%;
 }
 
 #directoyImageFile, #fileImageFile {
-	width: 200%;
+	width: 250%;
 	height: 9%;
 }
-
 
 
 #accountHome {

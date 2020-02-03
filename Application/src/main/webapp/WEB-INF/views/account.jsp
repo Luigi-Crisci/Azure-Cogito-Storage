@@ -26,7 +26,7 @@
          String uriPathEffettiva = uriPath.substring(0, uriPath.lastIndexOf("WEB-INF")) ; 
          Account account = (Account) request.getSession().getAttribute("account");
          %>
-      <link href="css/site.css" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href="<%=uriPathEffettiva%>css/site.css">
    </head>
    <body>
       <div class="container-fluid">
@@ -46,7 +46,7 @@
                         <th>Size(Kb)</th>
                         <th>Tag</th>
                         <th>Date</th>
-                        <th>Action</th>
+                        <th></th>
                      </tr>
                   </thead>
                   <tbody>
