@@ -143,6 +143,7 @@ public class StorageService {
 		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w.\\()s%-_]*", e.getName()) && !e.getName().contains(".blank"))
 		.forEach(e->{
 			final String name = e.getName();
+			logger.info(name  + ": " + e.getProperties().getContentLength());
 			String trueName= name.contains("/") ? name.substring(name.lastIndexOf('/')+1) : name;
 			blobsList.add(new BlobItemKeyStruct(e, createAccessLink(name,key), false, trueName));
 		});

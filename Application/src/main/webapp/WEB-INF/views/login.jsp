@@ -66,7 +66,7 @@
                 </div>
                 <div class="col-md-4">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" align="center">
 
                     <dl>
                         <dt>Professore:</dt>

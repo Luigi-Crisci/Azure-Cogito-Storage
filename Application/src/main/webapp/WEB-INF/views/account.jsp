@@ -1,6 +1,7 @@
 <%@page import="entity.*"%>
 <%@page import="java.util.stream.Collectors"%>
 <%@page import="java.util.stream.Collector"%>
+<%@page import="java.math.*"%>
 <%@page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"
 	import="java.util.*,com.azure.storage.blob.models.*"%>
@@ -21,10 +22,10 @@
                         <title>Account</title>
     
     <!-- Needed for making url position-resistant -->                    
-    <% String uriPath = request.getRequestURL().toString();
-	String uriPathEffettiva = uriPath.substring(0, uriPath.lastIndexOf("WEB-INF")) ; 
-	Account account = (Account) request.getSession().getAttribute("account");
-	
+    <% 
+	    String uriPath = request.getRequestURL().toString();
+		String uriPathEffettiva = uriPath.substring(0, uriPath.lastIndexOf("WEB-INF")) ; 
+		Account account = (Account) request.getSession().getAttribute("account");
 	%>
 	
                         <link href="css/site.css" rel="stylesheet">
@@ -52,6 +53,7 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>Name</th>
+                                                <th>Size(Kb)</th>
                                                 <th>Tag</th>
                                                 <th>Action</th>
                                             </tr>
@@ -64,10 +66,17 @@
 							int countImg = 0;
 							int countOther = 0;
 							int idCounter = 0;
+							long sizeFile = 0;
 							String filename,dirName = "";
-
+							double allBlobSize = 0;
+							
 							for (BlobItemKeyStruct b : blobs) {
 								String key = b.getKey();
+								if(!b.isDir()){
+									sizeFile = b.getItem().getProperties().getContentLength();
+									
+								}
+								
 								countTotal++;
 								idCounter++;
 								filename = b.getTrueName();
@@ -108,6 +117,19 @@
 								                            </a>
                                                     </td>
 
+                                                    <td>
+                                                    <%
+                                                    	if(!b.isDir())
+                                                    	{
+                                                    		 float sizeMb = (float)sizeFile/(1024);
+                                                    		 long roundedInt = Math.round(sizeMb * 100);
+                                                    		 double result = (double) roundedInt/100;
+                                                    		 allBlobSize += result;
+                                                    	%>
+                                                    		<label><%=result%></label>		
+                                                    	<%}%>
+                                                    </td>
+
                                                     <%
 							try{	
 								String tag = b.getItem().getMetadata().get("Tags").replaceAll("(?!\\s)\\W", "$0 ");
@@ -130,17 +152,8 @@
 
                                         </tbody>
                                     </table>
-                                    
-                                    
-                                    
-                                    
+                                 
                                  <!-- FILE TABLE END -->   
-                                    
-                                    
-                                    
-                                    
-                                    
-   
                                 </div>
                                 <div class="col-md-4" id="myborderDiv">
                                     <div>
@@ -183,7 +196,7 @@
                                     <form role="form" method="POST" enctype="multipart/form-data" id="fileUploadForm">
                                         <label for="InputSearch">Choose files to upload:</label>
                                         <input type="file" name="files" class="form-control">
-                                        <input type="submit" class="form-control" value="Upload" id="btnSubmit" onClick="window.location.reload();" />
+                                        <input type="submit" class="form-control" value="Upload" id="btnSubmit" />
                                     </form>
 
                                     <!--		
@@ -194,22 +207,32 @@
 						value="Submit" id="btnSubmit" />
 				</form>
 -->
-                                    <h1>Console</h1>
-                                    <dl>
-                                        <dt>
-						Numero oggetti totali:
-						<%=countTotal%></dt>
-                                        <dt>
-						Numero directory totali:
-						<%=countDir%></dt>
-                                        <dt>
-						Numero immagini totali:
-						<%=countImg%></dt>
-                                        <dt>
-						Numero file totali:
-						<%=countOther%></dt>
+                                      <div class="form-group">
+    <label for="exampleFormControlTextarea1">Console</label>
+    <textarea class="form-control" id="textArea" rows="3"></textarea>
+  </div>
 
-                                    </dl>
+
+<div>
+   <p >
+   Total size of blob:
+   <%=allBlobSize%> Kb</p>
+   <p>
+   All items:
+   <%=countTotal%></p>
+   <p>
+   Directory:
+   <%=countDir%></p>
+   <p>
+   Images:
+   <%=countImg%></p>
+   <p>
+   Files:
+   <%=countOther%></p>
+</div>
+
+
+                                    <br>
 
                                     <div>
                                         <a href="/logout">
@@ -226,7 +249,7 @@
                             <div class="col-md-4">
                                 <img id="imageFooter" src="<%=uriPathEffettiva%>img/logo_standard.png" class="rounded-circle" />
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" align="center">
                                 <dl>
                                     <dt>Professore:</dt>
                                     <dd>Vittorio Scarano</dd>

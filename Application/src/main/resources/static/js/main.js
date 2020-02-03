@@ -37,14 +37,14 @@ function create_dir_ajax(currentDir){
 	        timeout: 600000,
 	        success: function (data) {
 	        	
-	            $("#result").text(data);
+	            $("#textArea").append(data+"\n");
 	            console.log("SUCCESS : ", data);
 	            $("#createDirSubmit").prop("disabled", false);
 
 	        },
 	        error: function (e) {
 
-	            $("#result").text(e.responseText);
+	            $("#textArea").append(e.responseText+"\n");
 	            console.log("ERROR : ", e);
 	            $("#createDirSubmit").prop("disabled", false);
 
@@ -74,14 +74,14 @@ function fire_ajax_submit(currentDir) {
         timeout: 600000,
         success: function (data) {
 
-            $("#result").text(data);
+            $("#textArea").append(data+"\n");
             console.log("SUCCESS : ", data);
             $("#btnSubmit").prop("disabled", false);
 
         },
         error: function (e) {
 
-            $("#result").text(e.responseText);
+            $("#textArea").text(e.responseText+"\n");
             console.log("ERROR : ", e);
             $("#btnSubmit").prop("disabled", false);
 
@@ -111,12 +111,12 @@ function functionDelete(event,str){
         cache: false,
         timeout: 600000,
         success: function (data) {
-            $("#result").text(data);
+            $("#textArea").append(data+"\n");
 			console.log("SUCCESS : ", data);
 			divInputText.parent().parent().remove();
         },
         error: function (e) {
-        	$("#result").text(e.responseText);
+        	$("#textArea").append(e.responseText+"\n");
             console.log("ERROR : ", e);
         }
 	});
@@ -178,7 +178,7 @@ function rename(event,dirName) {
         cache: false,
         timeout: 600000,
         success: function (data) {
-            $("#result").text("SUCCESS : renamed successfully!");
+            $("#textArea").append("SUCCESS : renamed successfully!\n");
 			console.log("SUCCESS : renamed successfully!");
 			var textLabel = currentlyRenamingBox.parent().children().eq(1).children("label");
 			textLabel.text(currentlyRenamingBox.val());
@@ -195,7 +195,7 @@ function rename(event,dirName) {
 
         },
         error: function (e) {
-        	$("#result").text(e.responseText);
+        	$("#textArea").append(e.responseText+"\n");
 			console.log("ERROR : ", e);
 			var textLabel = currentlyRenamingBox.parent().children().eq(1).children("label");
 			currentlyRenamingBox.prop("hidden",true);
@@ -203,6 +203,4 @@ function rename(event,dirName) {
 			currentlyRenamingBox.removeAttr("disabled");
         }
 	});
-
-	
 }
