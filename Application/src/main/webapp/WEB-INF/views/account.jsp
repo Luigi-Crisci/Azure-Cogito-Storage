@@ -245,9 +245,11 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4"></div>
                             <div class="col-md-4">
-                                <img id="imageFooter" src="<%=uriPathEffettiva%>img/logo_standard.png" class="rounded-circle" />
+                            <img id="imageFooter" src="<%=uriPathEffettiva%>img/logo_standard.png" class="rounded-circle" />
+                            </div>
+                            <div class="col-md-4">
+                                
                             </div>
                             <div class="col-md-4" align="center">
                                 <dl>
