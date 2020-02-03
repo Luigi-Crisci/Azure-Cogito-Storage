@@ -27,7 +27,7 @@
 	
 	%>
 	
-                        <link href="<%=uriPathEffettiva%>css/site.css" rel="stylesheet">
+                        <link href="css/site.css" rel="stylesheet">
 
                         <script type="text/javascript" src="js/functions.js"></script>
 
@@ -121,7 +121,6 @@
                                                                 <td style="width: 20%" id="testo">
                                                                     <img id="deleteFile" src="<%=uriPathEffettiva%>img/trash.svg" alt="delete" onclick="functionDelete(this,'<%=dirName%>')"/>
                                                                     <img  id="renameFile" src="<%=uriPathEffettiva%>img/renameFile.png" alt="rename" onclick="showRename(this)" />
-                                                                    <img id="changeDirectory" src="<%=uriPathEffettiva%>img/changeDirectory.svg" alt="changeDir" onclick="/account/changeDir" />
                                                                 </td>
                                                 </tr>
                                                 <%
