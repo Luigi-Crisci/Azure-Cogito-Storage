@@ -49,10 +49,10 @@
                         <button type="submit" id="buttonLoginx" class="btn btn-success btn-lg btn-block">Login</button>
                         <br>
 
-                    </form>
-                    <a href="sign_up">
+                    </form> 
+                    <form method="GET" action="/registration">
                         <button type="submit" id="buttonLoginx" class="btn btn-primary btn-lg btn-block">Sign up</button>
-                    </a>
+ 					</form>
                 </div>
                 <div class="col-md-4">
 

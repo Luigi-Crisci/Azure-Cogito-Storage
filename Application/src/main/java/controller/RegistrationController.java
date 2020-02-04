@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -27,6 +28,12 @@ public class RegistrationController {
 	private HttpSession httpSession;
 	@Autowired
 	private Account account;
+	
+	
+	@GetMapping("/registration")
+	public String getPage() {
+		return "sign_up";
+	}
 	
 	@PostMapping("/registration")
 	public String registration(@RequestParam(required = true, name = "firstName") String name,
