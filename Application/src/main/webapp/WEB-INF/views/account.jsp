@@ -11,9 +11,16 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+    <% 
+         String uriPath = request.getRequestURL().toString();
+         String uriPathEffettiva = uriPath.substring(0, uriPath.lastIndexOf("WEB-INF")) ; 
+         Account account = (Account) request.getSession().getAttribute("account");
+         %>
+      <script type="text/javascript" src="/webjars/jquery/2.2.4/jquery.min.js"></script>
       <!-- <script type="text/javascript" src="js/main.js"></script>  -->
-      <script type="text/javascript" src="js/main.js"></script>
+      <script type="text/javascript" src="/js/main.js"></script>
+      
+      
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
       <meta charset="ISO-8859-1">
@@ -21,12 +28,8 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Account</title>
       <!-- Needed for making url position-resistant -->                    
-      <% 
-         String uriPath = request.getRequestURL().toString();
-         String uriPathEffettiva = uriPath.substring(0, uriPath.lastIndexOf("WEB-INF")) ; 
-         Account account = (Account) request.getSession().getAttribute("account");
-         %>
-      <link rel="stylesheet" type="text/css" href="<%=uriPathEffettiva%>css/site.css">
+     
+      <link rel="stylesheet" type="text/css" href="/css/site.css">
    </head>
    <body>
       <div class="container-fluid">

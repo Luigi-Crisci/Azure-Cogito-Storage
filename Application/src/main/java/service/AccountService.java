@@ -94,9 +94,9 @@ public class AccountService {
 	public void login(@NotNull String mailAddress,@NotNull String password_ins) throws SQLException, 
 								ClassNotFoundException, LoginException, UserNotFoundException, WrongPasswordException {
 		
-//		DatabaseSingleton Database = DatabaseSingleton.getInstance();
-//		ResultSet rs = Database.EseguiQuery(String.format(checkExistance, mailAddress));
-//		
+		DatabaseSingleton Database = DatabaseSingleton.getInstance();
+		ResultSet rs = Database.EseguiQuery(String.format(checkExistance, mailAddress));
+		
 //		if(!rs.next())
 //			throw new UserNotFoundException("User not found");
 //		if( password_ins.equals(rs.getString(5))) {

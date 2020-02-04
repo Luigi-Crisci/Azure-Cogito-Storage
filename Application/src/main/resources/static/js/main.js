@@ -74,7 +74,7 @@ function fire_ajax_submit(currentDir) {
         timeout: 600000,
         success: function (data) {
 
-            $("#textArea").append(data+"\n");
+            $("#textArea").append(data+". Please reload page to see changes\n");
             console.log("SUCCESS : ", data);
             $("#btnSubmit").prop("disabled", false);
 
