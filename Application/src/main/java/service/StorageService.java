@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import javax.naming.InvalidNameException;
 import javax.servlet.http.Part;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -306,8 +308,22 @@ public class StorageService {
 	 * @return
 	 * @throws BlobNotFoundExeption
 	 * @throws AlreadyExistingException
+	 * @throws InvalidNameException 
 	 */
-	public synchronized String rename(String blobName,String newFilename,boolean overwrite) throws BlobNotFoundExeption, AlreadyExistingException, IllegalArgumentException {
+	public synchronized String rename(String blobName,String newFilename,boolean overwrite) throws BlobNotFoundExeption, AlreadyExistingException, IllegalArgumentException, InvalidNameException {
+		
+		if(blobName.equals(newFilename))
+			return blobName;
+		
+		if(blobName.matches("^[a-zA-Z0-9.-_()%?!&$£]+.[a-zA-Z0-9-_()%?!&$£]+$")){
+			if(newFilename.matches("^[a-zA-Z0-9.-_()%?!&$£]+.[a-zA-Z0-9-_()%?!&$£]+$")) {
+				String ext = blobName.substring(blobName.lastIndexOf('.')+1);
+				if(!newFilename.substring(newFilename.lastIndexOf(".") + 1).equals(ext))
+					throw new InvalidNameException("Invalid name inserted");
+			}
+			else throw new InvalidNameException("Invalid name inserted"); 
+		}
+		
 		
 		BlobClient oldBlobClient=blobContainerClient.getBlobClient(blobName);
 		if(!oldBlobClient.exists())

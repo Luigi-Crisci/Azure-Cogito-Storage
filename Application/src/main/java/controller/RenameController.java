@@ -1,5 +1,6 @@
 package controller;
 
+import javax.naming.InvalidNameException;
 import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class RenameController {
 	
 	@PostMapping("/account/rename")
 	public ResponseEntity<?> rename(@RequestParam(name = "oldFilename", required = true) String oldFilename, 
-			@RequestParam(name = "newFilename", required = true) @Pattern(regexp = "^[a-zA-Z0-9.-_]+$" ) String newFilename, 
+			@RequestParam(name = "newFilename", required = true) @Pattern(regexp = "^[a-zA-Z0-9.-_()%?!&$£]+$" ) String newFilename, 
 			@RequestParam(name = "overwrite", required = false, defaultValue = "false") String overwrite){
 		
 			Boolean ow=new Boolean(false);
@@ -32,7 +33,9 @@ public class RenameController {
 			
 			String newKey = null;
 			try {
-					newKey = storageService.rename(oldFilename, newFilename, ow);
+						newKey = storageService.rename(oldFilename, newFilename, ow);
+				} catch (InvalidNameException e) {
+					return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
 				} catch (IllegalArgumentException e) {
 					return new ResponseEntity<>("Error while deleting blob, plese try later",HttpStatus.INTERNAL_SERVER_ERROR);
 				} catch (BlobNotFoundExeption e) {
