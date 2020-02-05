@@ -1,9 +1,6 @@
 package service;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import okhttp3.*;
+
+
 
 public class TextAnalyticsService {
 	
@@ -13,7 +10,7 @@ public class TextAnalyticsService {
 	
 	public void analyzeText(String url) {
 		
-		OkHttpClient httpClient= new OkHttpClient.Builder().build();
+//		OkHttpClient httpClient= new OkHttpClient.Builder().build();
 		
 		
 		

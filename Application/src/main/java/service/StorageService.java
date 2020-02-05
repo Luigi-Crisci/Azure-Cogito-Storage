@@ -46,18 +46,14 @@ import utility.UploadUtils;
 @SessionScope
 public class StorageService {
 
-	@Autowired
-	private Environment env;
+//	@Autowired
+//	private Environment env;
 	@Autowired
 	private Logger logger;
 	@Autowired
 	private CognitiveUploadService cognitiveUploadService;
-	@Autowired
-	private Account account;
-	@Autowired
-	private Azure azure;
-//	@Value("${azure.subid}")
-//	private String subId;
+//	@Autowired
+//	private Account account;
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient blobContainerClient;
 	private UserDelegationKey key;

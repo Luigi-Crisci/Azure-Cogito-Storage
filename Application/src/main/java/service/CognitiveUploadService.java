@@ -26,7 +26,7 @@ public class CognitiveUploadService {
 		static String subscriptionKey = System.getenv("COMPUTER_VISION_SUBSCRIPTION_KEY");
 	    static String endpoint = System.getenv("COMPUTER_VISION_ENDPOINT");
 
-	    private static final String uriBase = endpoint + "vision/v2.1/analyze";
+	    //private static final String uriBase = endpoint + "vision/v2.1/analyze";
 	  
 	    
 	    public HashMap<String,String> getMetadata(Part file,String url) {
