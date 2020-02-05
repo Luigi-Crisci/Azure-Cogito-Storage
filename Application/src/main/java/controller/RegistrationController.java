@@ -56,5 +56,12 @@ public class RegistrationController {
 		request.getSession().setAttribute("RegistrationError", "Errore nella formattazione o parametri mancanti");
 		return "sign_up";
 	}
+	
+	@ExceptionHandler({SQLException.class})
+	public String error(Exception e) {
+		httpSession.setAttribute("exception", e);
+		return "error";
+		
+	}
 
 }

@@ -46,4 +46,12 @@ public class LoginController {
 		session.setAttribute("Exception", e.getMessage());
 		return "login";
 	}
+	
+	@ExceptionHandler({SQLException.class})
+	public String error(Exception e) {
+		session.setAttribute("exception", e);
+		return "error";
+		
+	}
+	
 }
