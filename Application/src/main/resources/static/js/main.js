@@ -15,6 +15,15 @@ $(document).ready(function () {
     	event.preventDefault();
     	create_dir_ajax(currentDir);
     });
+    
+    var url = window.location.href;
+	var check = url.includes("/search");
+	
+	if(check == true){
+		$("#createDirectoryDiv").hide();
+		$("#UploadFileDiv").hide();	
+	}
+    
 
 });
 

@@ -147,7 +147,9 @@
                         </td>
                         <td style="width: 20%" id="testo" align="center">
                            <img id="deleteFile" src="<%=uriPathEffettiva%>img/trash.svg" alt="delete" onclick="functionDelete(this,'<%=dirName%>')"/>
+                           <%if(!b.isDir()){ %>
                            <img  id="renameFile" src="<%=uriPathEffettiva%>img/renameFile.png" alt="rename" onclick="showRename(this)" />
+                           <%} %>
                         </td>
                      </tr>
                      <%
@@ -164,21 +166,25 @@
                   </a>
                </div>
                <div class="form-group">
-                  <form role="form" method="post" action="/account/search">
+                  <form role="form" method="post" action="/account/search" >
                      <label for="InputSearch">Search:</label>
                      <input type="text" class="form-control" name="query"/>
                   </form>
                </div>
-               <form role="form" method="post" id="createDirForm">
-                  <label for="InputSearch">New directory name:</label>
-                  <input type="text" name="dirName" class="form-control">
-                  <!-- questo � il bottone --><input type="submit" class="form-control" value="Create" id="createDirSubmit" onClick="window.location.reload();" />
-               </form>
-               <form role="form" method="POST" enctype="multipart/form-data" id="fileUploadForm">
-                  <label for="InputSearch">Choose files to upload:</label>
-                  <input type="file" name="files" class="form-control">
-                  <input type="submit" class="form-control" value="Upload" id="btnSubmit" />
-               </form>
+               <div id="createDirectoryDiv">
+	               <form role="form" method="post" id="createDirForm">
+	                  <label for="InputSearch">New directory name:</label>
+	                  <input type="text" name="dirName" class="form-control">
+	                  <!-- questo � il bottone --><input type="submit" class="form-control" value="Create" id="createDirSubmit" onClick="window.location.reload();" />
+	               </form>
+               </div>
+               <div id="UploadFileDiv">
+	               <form role="form" method="POST" enctype="multipart/form-data" id="fileUploadForm">
+	                  <label for="InputSearch">Choose files to upload:</label>
+	                  <input type="file" name="files" class="form-control">
+	                  <input type="submit" class="form-control" value="Upload" id="btnSubmit" />
+	               </form>
+               </div>
                <div class="form-group">
                   <label for="exampleFormControlTextarea1">Console</label>
                   <textarea class="form-control" id="textArea" rows="3"></textarea>
