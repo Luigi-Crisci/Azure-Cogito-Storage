@@ -21,7 +21,7 @@ public class RenameController {
 	
 	@PostMapping("/account/rename")
 	public ResponseEntity<?> rename(@RequestParam(name = "oldFilename", required = true) String oldFilename, 
-			@RequestParam(name = "newFilename", required = true) @Pattern(regexp = "^[a-zA-Z0-9.-_()%?!&$£]+$" ) String newFilename, 
+			@RequestParam(name = "newFilename", required = true)String newFilename, 
 			@RequestParam(name = "overwrite", required = false, defaultValue = "false") String overwrite){
 		
 			Boolean ow=new Boolean(false);

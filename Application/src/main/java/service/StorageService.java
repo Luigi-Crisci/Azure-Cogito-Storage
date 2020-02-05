@@ -138,7 +138,7 @@ public class StorageService {
 		//Omega tarantella
 		String regexPath=path.replaceAll("\\/", "\\/");
 		blobs.stream()
-		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w.\\()s%-_]*", e.getName()) && !e.getName().contains(".blank"))
+		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w._\\%\\-()!?&$£]*", e.getName()) && !e.getName().contains(".blank"))
 		.forEach(e->{
 			final String name = e.getName();
 			logger.info(name  + ": " + e.getProperties().getContentLength());
@@ -311,8 +311,8 @@ public class StorageService {
 		if(blobName.equals(newFilename))
 			return blobName;
 		
-		if(blobName.matches("^[a-zA-Z0-9.-_()%?!&$£]+.[a-zA-Z0-9-_()%?!&$£]+$")){
-			if(newFilename.matches("^[a-zA-Z0-9.-_()%?!&$£]+.[a-zA-Z0-9-_()%?!&$£]+$")) {
+		if(blobName.matches("^[\\w.-_()\\%?!&$£]+.[\\w-_()\\%?!&$£]+$")){
+			if(newFilename.matches("^[\\w.-_()\\%?!&$£]+.[\\w-_()\\%?!&$£]+$")) {
 				String ext = blobName.substring(blobName.lastIndexOf('.')+1);
 				if(!newFilename.substring(newFilename.lastIndexOf(".") + 1).equals(ext))
 					throw new InvalidNameException("Invalid name inserted");
