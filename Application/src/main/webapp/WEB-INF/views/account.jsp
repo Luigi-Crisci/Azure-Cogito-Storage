@@ -17,7 +17,6 @@
          Account account = (Account) request.getSession().getAttribute("account");
          %>
       <script type="text/javascript" src="/webjars/jquery/2.2.4/jquery.min.js"></script>
-      <!-- <script type="text/javascript" src="js/main.js"></script>  -->
       <script type="text/javascript" src="/js/main.js"></script>
       
       
@@ -31,6 +30,8 @@
      
       <link rel="stylesheet" type="text/css" href="/css/site.css">
    </head>
+
+   
    <body>
       <div class="container-fluid">
          <div class="row">
