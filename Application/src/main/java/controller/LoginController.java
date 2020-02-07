@@ -50,7 +50,7 @@ public class LoginController {
 	@ExceptionHandler({SQLException.class})
 	public String error(Exception e) {
 		session.setAttribute("exception", e);
-		return "error";
+		return "errorException";
 		
 	}
 	
