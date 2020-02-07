@@ -41,17 +41,10 @@ public class LoginController {
 		return "redirect:/account";		
 	}
 	
-	@ExceptionHandler({LoginException.class,UserNotFoundException.class,WrongPasswordException.class})
+	@ExceptionHandler({LoginException.class,UserNotFoundException.class,WrongPasswordException.class,SQLException.class})
 	public String loginError(HttpSession session, Exception e) {
 		session.setAttribute("Exception", e.getMessage());
 		return "login";
-	}
-	
-	@ExceptionHandler({SQLException.class})
-	public String error(Exception e) {
-		session.setAttribute("exception", e);
-		return "errorException";
-		
 	}
 	
 }
