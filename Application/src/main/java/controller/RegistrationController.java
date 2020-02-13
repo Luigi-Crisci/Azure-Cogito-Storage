@@ -51,7 +51,7 @@ public class RegistrationController {
 	}
 	
 	
-	@ExceptionHandler({MissingServletRequestParameterException.class,MethodArgumentNotValidException.class})
+	@ExceptionHandler({MissingServletRequestParameterException.class,MethodArgumentNotValidException.class,AlreadyExistingException.class})
 	public String missingRegistrationParameter(HttpServletRequest request) {
 		request.getSession().setAttribute("RegistrationError", "Errore nella formattazione o parametri mancanti");
 		return "sign_up";

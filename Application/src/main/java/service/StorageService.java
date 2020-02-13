@@ -138,7 +138,9 @@ public class StorageService {
 		//Omega tarantella
 		String regexPath=path.replaceAll("\\/", "\\/");
 		blobs.stream()
-		.filter(e-> Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w._\\%\\-()!?&$£]*", e.getName()) && !e.getName().contains(".blank"))
+		.filter(e->{
+			return Pattern.matches("^"+regexPath+"[\\/]{0,1}[\\w._\\%\\-()!?&$£\\s]*", e.getName()) && !e.getName().contains(".blank");
+		})
 		.forEach(e->{
 			final String name = e.getName();
 			logger.info(name  + ": " + e.getProperties().getContentLength());

@@ -1,5 +1,7 @@
 package service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import utility.UploadUtils;
@@ -21,13 +23,19 @@ import org.json.JSONObject;
 
 @Service
 public class CognitiveUploadService {
-	    
+	
+		
 		//TODO: add these to application.config
-		static String subscriptionKey = System.getenv("COMPUTER_VISION_SUBSCRIPTION_KEY");
-	    static String endpoint = System.getenv("COMPUTER_VISION_ENDPOINT");
+		private final String subscriptionKey;
+		private final String endpoint;
 
 	    //private static final String uriBase = endpoint + "vision/v2.1/analyze";
 	  
+		@Autowired
+		public CognitiveUploadService(Environment env){
+			subscriptionKey = env.getProperty("azure.computer-vision-subscription-key");
+			endpoint = env.getProperty("azure.computer-vision-endpoint");
+		}
 	    
 	    public HashMap<String,String> getMetadata(Part file,String url) {
 	        String imageToAnalyze = url;
