@@ -11,8 +11,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Login AzureIAS</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/site.css" rel="stylesheet">
+        <link href="/css/site.css" rel="stylesheet">
     </head>
 
     <body>
@@ -21,11 +20,6 @@
                 <div class="col-md-12">
                     <div class="page-header">
                         <img id="logoImageLogin" src="img/Logo-Microsoft-Azure.png" alt="logo" />
-                        <!--  
-					<h1 id="h1_title_login">
-						Azure Cogito storage <small>Upload and ...</small>
-					</h1>
--->
                     </div>
                 </div>
                 <div class="col-md-4">
