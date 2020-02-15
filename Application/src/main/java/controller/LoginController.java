@@ -44,7 +44,7 @@ public class LoginController {
 	@ExceptionHandler({LoginException.class,UserNotFoundException.class,WrongPasswordException.class,SQLException.class})
 	public String loginError(HttpSession session, Exception e) {
 		session.setAttribute("Exception", e.getMessage());
-		return "login";
+		return "redirect:/";
 	}
 	
 }
