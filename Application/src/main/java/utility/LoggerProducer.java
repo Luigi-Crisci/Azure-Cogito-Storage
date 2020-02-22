@@ -11,7 +11,6 @@ public class LoggerProducer {
 	
 
 	@Bean
-	@Scope("prototype")
 	Logger logger(InjectionPoint injectionPoint){
     	return Logger.getLogger(injectionPoint.getAnnotatedElement().getClass());
 	}

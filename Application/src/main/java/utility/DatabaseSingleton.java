@@ -13,16 +13,8 @@ public class DatabaseSingleton
 	private Connection connection;
 	private Statement statement;
 	public Statement getStatement() {return statement;}
-	String connectionUrl =
-            "jdbc:sqlserver://database-ias.database.windows.net:1433;"
-                    + "database=db-test-ias;"
-                    + "user=gdipalma@database-ias;"
-                    + "password=Password01;"
-                    + "encrypt=true;"
-                    + "trustServerCertificate=false;"
-                    + "hostNameInCertificate=*.database.windows.net;"
-                    + "loginTimeout=30;";	
-
+	
+    String connectionUrl = "Deleted";
 	
 	private DatabaseSingleton() throws ClassNotFoundException
 	{
@@ -46,45 +38,49 @@ public class DatabaseSingleton
 			try 
 			{
 				connection = DriverManager.getConnection(connectionUrl);
+				connection.setAutoCommit(false);
 				statement = connection.createStatement();
 			} 
-			catch (SQLException e) 
-			{
+			catch (SQLException e){
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public void ChiudiConnessione()
+	public void ChiudiConnessione() throws SQLException
 	{
+		connection.close();
 		connection = null;
 		statement = null;
 	}
 	
-	public int EseguiQueryUpdate(String stringa)
+	public int EseguiQueryUpdate(String stringa) throws SQLException
 	{
-		try
-		{
-			return statement.executeUpdate(stringa);
+		try{
+			int i = statement.executeUpdate(stringa);
+			connection.commit();
+			return i;
 		}
-		catch (SQLException e)
-		{
+		catch (SQLException e){
 			e.printStackTrace();
+			connection.rollback();
+			return 0;
 		}
-		return 0;
 	}
 	
 	
-	public ResultSet EseguiQuery(String query)
+	public ResultSet EseguiQuery(String query) throws SQLException
 	{
-		try 
-		{	
-			return statement.executeQuery(query);
+		try{	
+			ResultSet rs= statement.executeQuery(query);
+			connection.commit();
+			return rs;
 		} 
-		catch (SQLException e) 
-		{
+		catch (SQLException e){
+			
+			connection.rollback();
 			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 }

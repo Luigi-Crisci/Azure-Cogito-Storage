@@ -1,12 +1,11 @@
-| Language | Framework | Platform | Author |
-| -------- | -------- |--------|--------|
-| Java | Spring | Azure Web App, Virtual Machine| |
+# AzureIAS
 
+A simple cloud storage service for intelligent and automatic document tagging
 
-# Java Spring boot web application
+#Author
 
-Sample Java Spring Boot web application that you can use to deploy on Azure.
-
+Luigi Crisci
+Giuseppe Di Palma
 
 ## License:
 

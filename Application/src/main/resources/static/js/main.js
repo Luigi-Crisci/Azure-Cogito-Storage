@@ -32,6 +32,13 @@ function create_dir_ajax(currentDir){
 	var data=new FormData(form);
 	data.set("dir",currentDir);
 	  $("#createDirSubmit").prop("disabled", true);
+	  var stringa = document.getElementById("inputNameDir").value;
+	  var regex = new RegExp('^[\\w-_]*$');
+	  //if name of dir is empty
+	  if (!document.getElementById("inputNameDir").value || !regex.test(document.getElementById("inputNameDir").value))
+	  {
+		  $("#textArea").append("Directory name not valid."+"\n");
+	  }else{
 	  
 	    $.ajax({
 	        type: "POST",
@@ -59,7 +66,7 @@ function create_dir_ajax(currentDir){
 
 	        }
 	    });
-	
+	  }
 }
 
 function fire_ajax_submit(currentDir) {

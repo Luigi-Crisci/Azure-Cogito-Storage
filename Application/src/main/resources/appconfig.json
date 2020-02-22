@@ -1,12 +1,3 @@
 {
-  "clientId": "6fc06fe6-26a3-4166-ab8d-0fa29a7c909a",
-  "clientSecret": "93942577-1548-454f-a971-eb4777bc5808",
-  "subscriptionId": "9ffa1034-e692-4bb6-aaa7-172fa6352018",
-  "tenantId": "49bb80cc-ebd0-4f5e-ac42-ebd0411b9e46",
-  "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
-  "resourceManagerEndpointUrl": "https://management.azure.com/",
-  "activeDirectoryGraphResourceId": "https://graph.windows.net/",
-  "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
-  "galleryEndpointUrl": "https://gallery.azure.com/",
-  "managementEndpointUrl": "https://management.core.windows.net/"
+  "comment" : "Azure generated credential, only for local testing"
 }

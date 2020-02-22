@@ -19,15 +19,16 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 @Service
 public class CognitiveUploadService {
 	
-		
-		//TODO: add these to application.config
 		private final String subscriptionKey;
 		private final String endpoint;
+		@Autowired
+		private Logger logger;
 
 	    //private static final String uriBase = endpoint + "vision/v2.1/analyze";
 	  
@@ -80,19 +81,16 @@ public class CognitiveUploadService {
 	                
 	                StringBuilder tags = new StringBuilder();
 	                for( Object tag : json.getJSONObject("description")
-	                		.getJSONArray("tags").toList())
+	                									.getJSONArray("tags").toList())
 	                	tags.append(tag+",");
 	                tags.deleteCharAt(tags.length()-1); //Remove last comma
 	                metadata.put("Tags", tags.toString());
 	                
-	                
-	                System.out.println("REST Response:\n");
-	                System.out.println(json.toString(2));
+	                logger.info("REST Response: " + json.toString(2));
 	                
 	                return metadata;
 	            }
 	        } catch (Exception e) {
-	            // Display error message.
 	            System.out.println(e.getMessage());
 	        }
 	        
@@ -100,6 +98,11 @@ public class CognitiveUploadService {
 	    }
 	    
 	    
+	    /**
+	     * Get the right endpoint for the submitted image
+	     * @param part
+	     * @return
+	     */
 	    private String getEndpoint(Part part) {
 	    	String fileType=part.getSubmittedFileName().substring(part.getSubmittedFileName().lastIndexOf('.')+1); //Get file type
 	    	

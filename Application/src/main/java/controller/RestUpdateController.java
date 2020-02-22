@@ -32,10 +32,10 @@ public class RestUpdateController {
 		
 		logger.info("Received file to upload");
 		if(file==null)
-			throw new Exception("No file to be uploaded");
+			throw new Exception();
 		
 		storageControllerBean.uploadFile(file,dir);
-		return new ResponseEntity<>("successfully uploaded!",HttpStatus.OK);
+		return new ResponseEntity<>("Successfully uploaded!",HttpStatus.OK);
 	}
 	
 	@ExceptionHandler({Exception.class})

@@ -140,11 +140,9 @@
                         <td style="width: 30%"><span class="ellipsis" id="indentTags">No tags!</span></td>
                         <% }%>
                         <td>
-                           <% 
-                              if(!b.isDir()){
-                              %>
+						<%if (!b.isDir()) {%>
                            <label><%=lastModifiedDay%>/<%=lastModifiedMount%>/<%=lastModifiedYear%> <%=lastModifiedHour%>:<%=lastModifiedMinute%></label>
-                           <%}%>
+						<% } %>
                         </td>
                         <td style="width: 20%" id="testo" align="center">
                            <img id="deleteFile" src="<%=uriPathEffettiva%>img/trash.svg" alt="delete" onclick="functionDelete(this,'<%=dirName%>')"/>
@@ -175,7 +173,7 @@
                <div id="createDirectoryDiv">
 	               <form role="form" method="post" id="createDirForm">
 	                  <label for="InputSearch">New directory name:</label>
-	                  <input type="text" name="dirName" class="form-control">
+	                  <input id="inputNameDir" type="text" name="dirName" class="form-control">
 	                  <!-- questo � il bottone --><input type="submit" class="form-control" value="Create" id="createDirSubmit" onClick="window.location.reload();" />
 	               </form>
                </div>

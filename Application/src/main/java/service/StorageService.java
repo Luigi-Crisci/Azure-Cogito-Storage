@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -46,14 +45,11 @@ import utility.UploadUtils;
 @SessionScope
 public class StorageService {
 
-//	@Autowired
-//	private Environment env;
+
 	@Autowired
 	private Logger logger;
 	@Autowired
 	private CognitiveUploadService cognitiveUploadService;
-//	@Autowired
-//	private Account account;
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient blobContainerClient;
 	private UserDelegationKey key;
@@ -67,8 +63,6 @@ public class StorageService {
 	 */
 	@Autowired
 	public StorageService(Environment tmpEnv,Account account,Azure azure) throws IOException {
-		Stopwatch stopwatch = Stopwatch.createStarted(); //Needed to count method time call
-
 		storageAccountName = tmpEnv.getProperty("azure.account-name")+account.getId();
 		containerName = tmpEnv.getProperty("azure.default-container");
 		
@@ -83,9 +77,6 @@ public class StorageService {
 		blobContainerClient=blobServiceClient.getBlobContainerClient(containerName);
 		if(!blobContainerClient.exists())
 			blobContainerClient=blobServiceClient.createBlobContainer(containerName);
-		
-		System.out.println("EXT: Blob clients get completed in: " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
-		stopwatch.stop();
 	}
 	
 	/**
@@ -118,9 +109,7 @@ public class StorageService {
 	 * @param path root path of retrieved blobs
 	 * @return each blob with a sas link key associated
 	 */
-	public List<BlobItemKeyStruct> retrieve(String path){
-		Stopwatch stopwatch = Stopwatch.createStarted();
-		
+	public List<BlobItemKeyStruct> retrieve(String path){		
 		//Generate a new key 
 		key= blobServiceClient.getUserDelegationKey(OffsetDateTime.now(), OffsetDateTime.now().plusHours(1));
 		
@@ -128,14 +117,13 @@ public class StorageService {
 		ListBlobsOptions options= new ListBlobsOptions();
 		BlobListDetails detail= new BlobListDetails();
 		detail.setRetrieveDeletedBlobs(false); //Do not retrieve deleted blobs
-		detail.setRetrieveSnapshots(false); //Do not retrieve any snapshot of any file
+		detail.setRetrieveSnapshots(false); //Do not retrieve snapshots of any file
 		detail.setRetrieveMetadata(true);
 		options.setDetails(detail);
 		
 		PagedIterable<BlobItem> blobs=blobContainerClient.listBlobs(options,null);
 		List<BlobItemKeyStruct> blobsList= new ArrayList<BlobItemKeyStruct>();
 		
-		//Omega tarantella
 		String regexPath=path.replaceAll("\\/", "\\/");
 		blobs.stream()
 		.filter(e->{
@@ -164,16 +152,14 @@ public class StorageService {
 		
 		//Print all blobs, just to log them in the console
 		for(BlobItemKeyStruct x : blobsList) {
-			System.out.println(x.toString());
+			logger.info(x.toString());
 		}
 		
 		//Sort blobs
 		blobsList.sort((a,b)-> a.getTrueName().compareTo(b.getTrueName())); //Sort item
 		
-		System.out.println("EXT: Retrieve blobs completed in: " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
 		return blobsList;
 	}
-	
 	
 	public String createAccessLink(String blobName,UserDelegationKey key){
 		BlobSasPermission blobPermission = new BlobSasPermission()
@@ -274,7 +260,7 @@ public class StorageService {
 	 * @param fileName blob file name
 	 * @return if has been deleted
 	 */
-	public boolean delete(String filename) {
+	public synchronized boolean delete(String filename) {
 		filename = filename.trim();
 		try {
 			logger.info("Deleting blob : " + filename);

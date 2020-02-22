@@ -11,6 +11,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import com.microsoft.azure.AzureEnvironment;
+import com.microsoft.azure.credentials.AppServiceMSICredentials;
+import com.microsoft.azure.credentials.MSICredentials;
 import com.microsoft.azure.management.Azure;
 
 @Component
@@ -28,6 +31,7 @@ public class AzureCredentialProducer implements InitializingBean{
 		//Only on local
 		Resource resource = new ClassPathResource("appconfig.json");
 		File devCredential = new File(resource.getURI());
+//		new AppServiceMSICredentials(AzureEnvironment.AZURE) for online testing
 		azure= Azure.authenticate(devCredential).withSubscription(env.getProperty("azure.subid"));  //Only on local
 		logger.info("Logged into Azure account successfully!");
 	}
